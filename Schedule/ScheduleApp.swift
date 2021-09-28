@@ -9,10 +9,14 @@ import SwiftUI
 
 @main
 struct ScheduleApp: App {
+    
+    @StateObject var listViewModel: ListViewModel = ListViewModel()
+    
     var body: some Scene {
         WindowGroup {
             ScheduleTabView()
-                .environmentObject(DataStore())
+                .environmentObject(listViewModel)
         }
     }
 }
+

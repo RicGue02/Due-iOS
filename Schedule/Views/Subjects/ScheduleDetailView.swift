@@ -20,16 +20,18 @@ struct ScheduleDetailView: View {
                 // MARK: Schedule Image
                 
                 ZStack {
-                    Image(schedule.image)
+                    Image(uiImage: schedule.getImage(width: 600))
                         .resizable()
                         .scaledToFill()
+                        .clipped()
                     
-                    Link(destination: URL(string: schedule.urls)!) {
-                        Image(systemName: "link.circle")
-                            .foregroundColor(.black)
-                            .font(.largeTitle)
-                            .position(x: 360, y: 35)
-                            
+                    if let urls = URL(string: schedule.urls) {
+                        Link(destination: urls) {
+                            Image(systemName: "link.circle")
+                                .foregroundColor(.black)
+                                .font(.largeTitle)
+                                .position(x: 360, y: 35)
+                        }
                     }
                 }
                 
@@ -38,46 +40,53 @@ struct ScheduleDetailView: View {
                     .bold()
                     .padding(.top, 20)
                     .padding(.leading)
-                    .font(Font.custom("Avenir Heavy", size: 24))
+                    .font(Font.custom("Palentino Heavy", size: 24))
                 
                 HStack {
 
-                    Link(destination: URL(string: schedule.clase)!) {
-                        Image(systemName: "video.circle")
-                            .foregroundColor(.black)
-                            .font(.largeTitle)
-                            .position(x: 60, y: 20)
+                    if let claseURL = URL(string: schedule.clase) {
+                        Link(destination: claseURL) {
+                            Image(systemName: "video.circle")
+                                .foregroundColor(.black)
+                                .font(.largeTitle)
+                                .position(x: 60, y: 20)
+                        }
                     }
+                    
  
-                    Link(destination: URL(string: schedule.recursos)!) {
-                        Image(systemName: "person.crop.circle")
-                            .foregroundColor(.black)
-                            .font(.largeTitle)
-                            .position(x: 60, y: 20)
+                    if let recursosURL = URL(string: schedule.recursos) {
+                        Link(destination: recursosURL) {
+                            Image(systemName: "person.crop.circle")
+                                .foregroundColor(.black)
+                                .font(.largeTitle)
+                                .position(x: 60, y: 20)
+                        }
                     }
+                    
 
-                    Link(destination: URL(string: schedule.chat)!) {
-                        Image(systemName: "phone.circle")
-                            .foregroundColor(.black)
-                            .font(.largeTitle)
-                            .position(x: 60, y: 20)
+                    if let chatURL = URL(string: schedule.clase) {
+                        Link(destination: chatURL) {
+                            Image(systemName: "phone.circle")
+                                .foregroundColor(.black)
+                                .font(.largeTitle)
+                                .position(x: 60, y: 20)
+                        }
                     }
+                    
                 }
                 .padding(5)
-
-                
-                
+            
                 // MARK: Links
                 VStack(alignment: .leading) {
-                    Text("Horario")
-                        .font(Font.custom("Avenir Heavy", size: 16))
+                    Text("Schedule")
+                        .font(Font.custom("Palentino", size: 16))
                         .padding([.bottom, .top], 5)
                     
-                    ForEach(0..<schedule.link.count, id: \.self) { index in
+                    ForEach(0..<schedule.dates.count, id: \.self) { index in
                         
-                        Text("➝ " + schedule.link[index])
+                        Text("➝ " + "\(schedule.dates[index])")
                             .padding(.bottom, 5)
-                            .font(Font.custom("Avenir", size: 15))
+                            .font(Font.custom("Palentino", size: 15))
                     }
 
     
@@ -89,15 +98,15 @@ struct ScheduleDetailView: View {
                 
                 // MARK: More Information
                 VStack(alignment: .leading) {
-                    Text("Información Adicional")
-                        .font(Font.custom("Avenir Heavy", size: 16))
+                    Text("Aditional Information")
+                        .font(Font.custom("Palentino", size: 16))
                         .padding([.bottom, .top], 5)
                     
                     ForEach(0..<schedule.moreinfo.count, id: \.self) { index in
                         
                         Text(schedule.moreinfo[index])
                             .padding(.bottom, 5)
-                            .font(Font.custom("Avenir", size: 15))
+                            .font(Font.custom("Palentino", size: 15))
                     }
                 }
                 .padding(.horizontal)

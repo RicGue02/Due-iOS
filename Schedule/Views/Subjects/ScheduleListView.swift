@@ -6,10 +6,13 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct ScheduleListView: View {
     
     @EnvironmentObject var model:ScheduleModel
+    @State var addSchedule = false
+    @State var showImages = false
     
     var body: some View {
         
@@ -20,6 +23,7 @@ struct ScheduleListView: View {
                 HStack(spacing: 15) {
                     Button(action: {
                         // Implementar la función de meter materias
+                        self.addSchedule = true
                     }, label: {
                         Image(systemName: "plus.circle")
                             .padding(.top, 40)
@@ -28,43 +32,70 @@ struct ScheduleListView: View {
                     Text("All Subjects")
                         .bold()
                         .padding(.top, 40)
-                        .font(Font.custom("Avenir Heavy", size: 24))
+                        .font(Font.custom("Palentino", size: 24))
                 }
                 
+//                Divider()
                 
                 ScrollView {
-                    LazyVStack (alignment: .leading) {
-                        ForEach(model.schedules) { r in
-                            
+                    VStack {
+                        ForEach(model.schedules) { item in
                             NavigationLink(
-                                destination: ScheduleDetailView(schedule:r),
+                                destination: ScheduleDetailView(schedule: item),
                                 label: {
                                     
                                     // MARK: Row item
                                     HStack(spacing: 20.0) {
-                                        Image(r.image)
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 50, height: 50, alignment: .center)
-                                            .clipped()
-                                            .cornerRadius(5)
+                                        if showImages {
+                                            Image(uiImage: item.getImage(width: 100))
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 50, height: 50, alignment: .center)
+                                                .clipped()
+                                                .cornerRadius(5)
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 4)
+                                                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                                                )
+                                        }else {
+                                            Spacer()
+                                                .frame(width: 50, height: 50, alignment: .center)
+                                                .cornerRadius(5)
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 4)
+                                                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                                                )
+                                        }
                                         
                                         VStack (alignment: .leading) {
-                                            Text(r.name)
+                                            Text(item.name)
                                                 .foregroundColor(.black)
-                                                .font(Font.custom("Avenir Heavy", size: 16))
+                                                .font(Font.custom("Palentino", size: 16))
                                             
-                                            ScheduleHighlights(highlights: r.highlights)
+                                            ScheduleHighlights(highlights: item.highlights)
                                                 .foregroundColor(.black)
+                                            
                                         }
+                                        Spacer()
                                     }
                                 })
+                                .padding(.bottom, 10)
                         }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             .navigationBarHidden(true)
             .padding(.leading)
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                    self.showImages = true
+                }
+            }
+            .sheet(isPresented: $addSchedule) {
+                AddScheduleView()
+                    .environmentObject(model)
+            }
         }
     }
 }

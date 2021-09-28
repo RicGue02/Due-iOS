@@ -1,3 +1,11 @@
+/**
+
+"image": "ofi",
+"moreinfo": ["Consulta los miércoles de 5:00 a 7:00 PM"]
+
+
+*/
+
 [{
         "name": "Aplicaciones Ofimaticas",
         "featured": true,
@@ -24,7 +32,8 @@
         "recursos": "https://chat.whatsapp.com/JqstWEYEPZhH7hrb1uBzZl",
         "chat": "https://chat.whatsapp.com/Lt71Fc4PYwZIUCEw4PqAnC",
         "moreinfo": [""]
-    }, {
+    },
+    {
         "name": "Publicidad y Promocion",
         "featured": true,
         "image": "publi",
@@ -108,7 +117,8 @@
         "recursos":"https://tecnube1-my.sharepoint.com/:f:/g/personal/jespinoza_itcr_ac_cr/EodJGF0KOUpEiujEP30ZR9EBU6JYIqv8iKjFcgYB3B1YMQ?e=KnhEWK",
         "chat": "nil",
         "moreinfo": [""]
-    }, {
+    },
+    {
         "name": "iOS Course",
         "featured": true,
         "image": "swi",

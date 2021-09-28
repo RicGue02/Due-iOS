@@ -7,28 +7,25 @@
 
 import SwiftUI
 
-
-
 struct ScheduleTabView: View {
-    
+    @StateObject var listViewModel: ListViewModel = ListViewModel()
     
     var body: some View {
         
         TabView {
-            
             ScheduleFeaturedView()
                 .tabItem {
                     VStack {
-                        Image(systemName: "book")
-                        Text("Horario")
+                        Image(systemName: "calendar")
+                        Text("Schedule")
                     }
                 }
            
-            TodoList()
+            ListView()
                 .tabItem {
                     VStack {
                         Image(systemName: "list.star")
-                        Text("Asignaciones")
+                        Text("Tasks")
                     }
                 }
             
@@ -36,7 +33,7 @@ struct ScheduleTabView: View {
                 .tabItem {
                     VStack {
                         Image(systemName: "books.vertical")
-                        Text("Materias")
+                        Text("Subjects")
                     }
                 }
         }
