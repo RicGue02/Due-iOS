@@ -97,11 +97,12 @@ struct ScheduleFeaturedView: View {
             }
             else {
                 VStack(spacing: 40) {
-                    Text("Today's subjects - None")
+                    Text("Today's subjects")
                         .bold()
                         .padding(.leading)
                         .padding(.top, 40)
-                        .font(Font.custom("Avenir Heavy", size: 24))
+                        .font(Font.custom("Palentino Heavy", size: 24))
+                        .accessibilityLabel("None")
                     
 //                    Divider()
                     
