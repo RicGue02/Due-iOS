@@ -96,8 +96,9 @@ struct ScheduleFeaturedView: View {
                 
             }
             else {
-                VStack(spacing: 40) {
+                VStack(spacing: 20) {
                     Text("Today's subjects")
+                        .multilineTextAlignment(.center)
                         .bold()
                         .padding(.leading)
                         .padding(.top, 40)
@@ -106,16 +107,20 @@ struct ScheduleFeaturedView: View {
                     Button(action: {
                         self.addSchedule = true
                     }, label: {
-                        ZStack{
-                            Image(systemName: "pencil")
-                                .font(.title2)
-                                .offset(x:18,y:-8)
-                            Image(systemName: "book")
-                                .font(.title)
-                                .frame(width: 70, height: 70)
+                        HStack(spacing:-15) {
+                            
+                            ZStack{
+                                Image(systemName: "pencil")
+                                    .font(.title2)
+                                    .offset(x:18,y:-8)
+                                Image(systemName: "book")
+                                    .font(.title)
+                                    .frame(width: 70, height: 70)
+                            }
+                            Text("Add a subject")
+                                    .font(Font.custom("Palentino", size: 16))
+                                    .padding()
                         }
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(50)
                     })
                 }
             }
