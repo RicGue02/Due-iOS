@@ -44,7 +44,6 @@ struct AddView: View {
             .padding(14)
         }
         .navigationTitle("New Task")
-//        .navigationTitle("New Task 🖊")
         .alert(isPresented: $showAlert, content: getAlert)
     }
     
@@ -91,5 +90,6 @@ struct AddView_Previews: PreviewProvider {
             .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
 
         }.foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+        
     }
 }

@@ -12,6 +12,8 @@ struct ScheduleTabView: View {
     
     var body: some View {
         
+        Divider()
+        
         TabView {
             ScheduleFeaturedView()
                 .tabItem {

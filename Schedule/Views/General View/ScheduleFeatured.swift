@@ -24,7 +24,7 @@ struct ScheduleFeaturedView: View {
                     .bold()
                     .padding(.leading)
                     .padding(.top, 40)
-                    .font(Font.custom("Avenir Heavy", size: 24))
+                    .font(Font.custom("Palentino Heavy", size: 24))
                 
                 GeometryReader { geo in
                     TabView (selection: $tabSelectionIndex) {
@@ -55,7 +55,7 @@ struct ScheduleFeaturedView: View {
                                         .overlay(
                                             VStack {
                                                 Text(model.schedules[index].name)
-                                                    .font(Font.custom("Avenir", size: 15))
+                                                    .font(Font.custom("Palentino", size: 15))
                                                     .frame(maxWidth: .infinity, alignment: .center)
                                                     .padding(8)
                                                     .background(Color.white)
@@ -82,11 +82,11 @@ struct ScheduleFeaturedView: View {
                 if model.schedules[tabSelectionIndex].featured == true {
                     VStack (alignment: .leading, spacing: 10) {
                         Text("Institution:")
-                            .font(Font.custom("Avenir Heavy", size: 16))
+                            .font(Font.custom("Palentino Heavy", size: 16))
                         Text(model.schedules[tabSelectionIndex].description)
-                            .font(Font.custom("Avenir", size: 15))
+                            .font(Font.custom("Palentino", size: 15))
                         Text("Teacher:")
-                            .font(Font.custom("Avenir Heavy", size: 16))
+                            .font(Font.custom("Palentino Heavy", size: 16))
                         ScheduleHighlights(highlights: model.schedules[tabSelectionIndex].highlights)
                     }
                     .padding([.leading, .bottom])
@@ -102,10 +102,7 @@ struct ScheduleFeaturedView: View {
                         .padding(.leading)
                         .padding(.top, 40)
                         .font(Font.custom("Palentino Heavy", size: 24))
-                        .accessibilityLabel("None")
-                    
-//                    Divider()
-                    
+                                        
                     Button(action: {
                         self.addSchedule = true
                     }, label: {
@@ -116,10 +113,10 @@ struct ScheduleFeaturedView: View {
                             Image(systemName: "book")
                                 .font(.title)
                                 .frame(width: 70, height: 70)
-                                
                         }
                         .background(Color.gray.opacity(0.1))
                         .cornerRadius(50)
+                        .clipShape(Rectangle)
                     })
                 }
             }
