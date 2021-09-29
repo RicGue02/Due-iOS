@@ -11,9 +11,7 @@ struct ScheduleTabView: View {
     @StateObject var listViewModel: ListViewModel = ListViewModel()
     
     var body: some View {
-        
-        Divider()
-        
+                
         TabView {
             ScheduleFeaturedView()
                 .tabItem {

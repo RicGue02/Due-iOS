@@ -116,7 +116,6 @@ struct ScheduleFeaturedView: View {
                         }
                         .background(Color.gray.opacity(0.1))
                         .cornerRadius(50)
-                        .clipShape(Rectangle)
                     })
                 }
             }
