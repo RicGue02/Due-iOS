@@ -15,6 +15,9 @@ struct ScheduleFeaturedView: View {
     @State var tabSelectionIndex = 0
     @State var addSchedule = false
     
+    @State var animate: Bool = false
+    let secondaryAccentColor = Color(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+    
     var body: some View {
         
         VStack(alignment: .leading, spacing: 0) {
@@ -114,16 +117,20 @@ struct ScheduleFeaturedView: View {
                         .font(Font.custom("Palentino", size: 14))
                         .onTapGesture {self.addSchedule = true}
                 }
-                .padding()
+                .padding(.horizontal, animate ? 30 : 50)
+                .shadow(
+                    color: animate ? secondaryAccentColor.opacity(0.7) : Color.blue.opacity(0.7),
+                    radius: animate ? 30 : 10,
+                    x: 0,
+                    y: animate ? 50 : 30)
+                .scaleEffect(animate ? 1.1 : 1.0)
+                .offset(y: animate ? -7 : 0)
+                
             }
         }
-        .onAppear(perform: {
-            setFeaturedIndex()
-        })
-        .sheet(isPresented: $addSchedule) {
-            AddScheduleView()
-                .environmentObject(model)
-        }
+        .onAppear(perform: addAnimation)
+        .onAppear(perform: {setFeaturedIndex()})
+        .sheet(isPresented: $addSchedule) {AddScheduleView().environmentObject(model)}
     }
     
     func setFeaturedIndex() {
@@ -133,6 +140,20 @@ struct ScheduleFeaturedView: View {
         }
         tabSelectionIndex = index ?? 0
     }
+    
+    func addAnimation() {
+        guard !animate else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            withAnimation(
+                Animation
+                    .easeInOut(duration: 2.0)
+                    .repeatForever()
+            ) {
+                animate.toggle()
+            }
+        }
+    }
+    
 }
 
 struct ScheduleFeaturedView_Previews: PreviewProvider {

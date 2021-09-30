@@ -163,7 +163,7 @@ private struct MainView:View {
             ///Highlights
             inputItem(textBinding: $highlightsText, title: "Highlights")
             ///Dates
-            HStack {
+            HStack (spacing:26) {
                 DatePicker("Date:", selection: $date)
                     .font(.caption)
                     .font(Font.custom("Palentino", size: 14))
@@ -173,7 +173,7 @@ private struct MainView:View {
                     }
                 } label: {
                     Image(systemName: "plus.circle")
-                        .font(.title)
+                        .font(.title2)
                 }
             }
             .frame(alignment: .leading)
