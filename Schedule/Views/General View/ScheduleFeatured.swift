@@ -16,7 +16,7 @@ struct ScheduleFeaturedView: View {
     @State var addSchedule = false
     
     @State var animate: Bool = false
-    let secondaryAccentColor = Color(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+    let secondaryAccentColor = Color(.blue)
     
     var body: some View {
         
@@ -105,29 +105,60 @@ struct ScheduleFeaturedView: View {
                 
                 
                 
-            }else {
-                HStack(spacing: 5) {
-                    Button(action: {
-                        self.addSchedule = true
-                    }, label: {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.title)
-                    })
-                    Text("No subjects attached!")
+            }
+            else {
+                VStack(spacing: 10) {
+                    Text("Welcome to Balance!")
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .font(Font.custom("Palentino", size: 16))
+
+                    Text("Add yor subject so you can keep everything tight")
+                        .padding(.bottom, 20)
                         .font(Font.custom("Palentino", size: 14))
-                        .onTapGesture {self.addSchedule = true}
+                    
+                    Divider()
+                    Spacer()
+                    
+                    //aún no me decido de la imagen/logo
+                    
+                    Image("med")
+                        .resizable()
+                        .scaledToFit()
+                        .clipped()
+                    
+                    Spacer()
+
+                    HStack(spacing: 10) {
+                        Button(action: {
+                            self.addSchedule = true
+                        }, label: {
+                            Image(systemName: "plus.circle")
+                                .font(.title2)
+                        })
+                        Text("New subject!")
+                            .font(Font.custom("Palentino", size: 14))
+                            .onTapGesture {self.addSchedule = true}
+                            .foregroundColor(.blue)
+                            .font(.largeTitle)
+                    }
+                    .frame(height: 55)
+                    .frame(maxWidth: .infinity)
+                    .cornerRadius(10)
+                    .padding(.horizontal, animate ? 30 : 50)
+                    .shadow(
+                        color: animate ? secondaryAccentColor.opacity(0.5) : Color.blue.opacity(0.5),
+                        radius: animate ? 30 : 10,
+                        x: 0,
+                        y: animate ? 50 : 30)
+                    .scaleEffect(animate ? 1.1 : 1.0)
+                    .offset(y: animate ? -7 : 0)
                 }
-                .padding(.horizontal, animate ? 30 : 50)
-                .shadow(
-                    color: animate ? secondaryAccentColor.opacity(0.7) : Color.blue.opacity(0.7),
-                    radius: animate ? 30 : 10,
-                    x: 0,
-                    y: animate ? 50 : 30)
-                .scaleEffect(animate ? 1.1 : 1.0)
-                .offset(y: animate ? -7 : 0)
-                
             }
         }
+        .frame(maxWidth: 400)
+        .multilineTextAlignment(.center)
+        .padding(40)
         .onAppear(perform: addAnimation)
         .onAppear(perform: {setFeaturedIndex()})
         .sheet(isPresented: $addSchedule) {AddScheduleView().environmentObject(model)}
@@ -153,8 +184,9 @@ struct ScheduleFeaturedView: View {
             }
         }
     }
-    
 }
+
+
 
 struct ScheduleFeaturedView_Previews: PreviewProvider {
     static var previews: some View {
