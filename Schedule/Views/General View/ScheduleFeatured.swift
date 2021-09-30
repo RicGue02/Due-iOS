@@ -20,7 +20,7 @@ struct ScheduleFeaturedView: View {
         VStack(alignment: .leading, spacing: 0) {
             
             if !model.schedules.isEmpty {
-                Text("Today's subjects")
+                Text("Featured Subjects")
                     .bold()
                     .padding(.leading)
                     .padding(.top, 40)
@@ -33,7 +33,7 @@ struct ScheduleFeaturedView: View {
                             // Only show those that should be featured
                             if model.schedules[index].featured == true {
                                 
-                                // schedule card button
+                                // Recipe card button
                                 Button(action: {
                                     // Show the schedule detail sheet
                                     self.isDetailViewShowing = true
@@ -60,8 +60,11 @@ struct ScheduleFeaturedView: View {
                                                     .padding(8)
                                                     .background(Color.white)
                                             }
-                                            ,alignment: .bottom)
+                                            
+                                            ,alignment: .bottom
+                                        )
                                     }
+                                    
                                 })
                                 .tag(index)
                                 .sheet(isPresented: $isDetailViewShowing) {
@@ -72,57 +75,46 @@ struct ScheduleFeaturedView: View {
                                 .frame(width: geo.size.width - 40, height: geo.size.height - 100, alignment: .center)
                                 .cornerRadius(15)
                                 .shadow(color: Color(.sRGB, red: 0, green: 0, blue: 0, opacity: 0.5), radius: 10, x: -5, y: 5)
+                                
                             }
                         }
+                        
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
                     .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+                    
                 }
-                          
+                
+                
                 if model.schedules[tabSelectionIndex].featured == true {
                     VStack (alignment: .leading, spacing: 10) {
-                        Text("Institution:")
+                        Text("Institución:")
                             .font(Font.custom("Palentino Heavy", size: 16))
                         Text(model.schedules[tabSelectionIndex].description)
                             .font(Font.custom("Palentino", size: 15))
-                        Text("Teacher:")
+                        Text("Profesor(a):")
                             .font(Font.custom("Palentino Heavy", size: 16))
                         ScheduleHighlights(highlights: model.schedules[tabSelectionIndex].highlights)
+                        
                     }
                     .padding([.leading, .bottom])
                 }
                 
                 
                 
-            }
-            else {
-                VStack(spacing: 20) {
-                    Text("Today's subjects")
-                        .multilineTextAlignment(.center)
-                        .bold()
-                        .padding(.leading)
-                        .padding(.top, 40)
-                        .font(Font.custom("Palentino Heavy", size: 24))
-                                        
+            }else {
+                HStack(spacing: 5) {
                     Button(action: {
                         self.addSchedule = true
                     }, label: {
-                        HStack(spacing:-15) {
-                            
-                            ZStack{
-                                Image(systemName: "pencil")
-                                    .font(.title2)
-                                    .offset(x:18,y:-8)
-                                Image(systemName: "book")
-                                    .font(.title)
-                                    .frame(width: 70, height: 70)
-                            }
-                            Text("Add a subject")
-                                    .font(Font.custom("Palentino", size: 16))
-                                    .padding()
-                        }
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title)
                     })
+                    Text("No subjects attached!")
+                        .font(Font.custom("Palentino", size: 14))
+                        .onTapGesture {self.addSchedule = true}
                 }
+                .padding()
             }
         }
         .onAppear(perform: {
@@ -146,7 +138,7 @@ struct ScheduleFeaturedView: View {
 struct ScheduleFeaturedView_Previews: PreviewProvider {
     static var previews: some View {
         ScheduleFeaturedView()
-            .environmentObject(ScheduleModel())            
+            .environmentObject(ScheduleModel())
     }
 }
 
