@@ -7,13 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F59744927089BF100F0FF2A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F59744827089BF100F0FF2A /* NotificationManager.swift */; };
 		1F8CAED826F8B98A00474D16 /* AddScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8CAED726F8B98A00474D16 /* AddScheduleView.swift */; };
 		1F8CAEDB26F8C21000474D16 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8CAEDA26F8C21000474D16 /* ImagePickerView.swift */; };
+		1FD9A56D2709D14F000AF637 /* TaskNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD9A56C2709D14F000AF637 /* TaskNotificationManager.swift */; };
+		1FD9A56F2709D8B4000AF637 /* Palatino.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FD9A56E2709D8B4000AF637 /* Palatino.ttf */; };
+		1FD9A5712709DC21000AF637 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD9A5702709DC21000AF637 /* Extensions.swift */; };
+		1FD9A5732709E0CD000AF637 /* Palatino-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1FD9A5722709E0CD000AF637 /* Palatino-Bold.otf */; };
 		8C4C978626F1362B00EC518E /* AddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4C977E26F1362B00EC518E /* AddView.swift */; };
 		8C4C978726F1362B00EC518E /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4C977F26F1362B00EC518E /* ListView.swift */; };
 		8C4C978826F1362B00EC518E /* NoItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4C978026F1362B00EC518E /* NoItemsView.swift */; };
 		8C4C978926F1362B00EC518E /* ListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4C978126F1362B00EC518E /* ListRowView.swift */; };
-		8C4C978A26F1362B00EC518E /* ItemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4C978326F1362B00EC518E /* ItemModel.swift */; };
+		8C4C978A26F1362B00EC518E /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4C978326F1362B00EC518E /* TaskItem.swift */; };
 		8C4C978B26F1362B00EC518E /* ListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4C978526F1362B00EC518E /* ListViewModel.swift */; };
 		8C951DD626E9619400B4A148 /* ScheduleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C951DD526E9619400B4A148 /* ScheduleApp.swift */; };
 		8C951DD826E9619400B4A148 /* ScheduleTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C951DD726E9619400B4A148 /* ScheduleTabView.swift */; };
@@ -31,13 +36,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1F59744727089B1200F0FF2A /* Schedule.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Schedule.entitlements; sourceTree = "<group>"; };
+		1F59744827089BF100F0FF2A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		1F8CAED726F8B98A00474D16 /* AddScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddScheduleView.swift; sourceTree = "<group>"; };
 		1F8CAEDA26F8C21000474D16 /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
+		1FD9A56C2709D14F000AF637 /* TaskNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskNotificationManager.swift; sourceTree = "<group>"; };
+		1FD9A56E2709D8B4000AF637 /* Palatino.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Palatino.ttf; sourceTree = "<group>"; };
+		1FD9A5702709DC21000AF637 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		1FD9A5722709E0CD000AF637 /* Palatino-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Palatino-Bold.otf"; sourceTree = "<group>"; };
 		8C4C977E26F1362B00EC518E /* AddView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddView.swift; sourceTree = "<group>"; };
 		8C4C977F26F1362B00EC518E /* ListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 		8C4C978026F1362B00EC518E /* NoItemsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoItemsView.swift; sourceTree = "<group>"; };
 		8C4C978126F1362B00EC518E /* ListRowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListRowView.swift; sourceTree = "<group>"; };
-		8C4C978326F1362B00EC518E /* ItemModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemModel.swift; sourceTree = "<group>"; };
+		8C4C978326F1362B00EC518E /* TaskItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskItem.swift; sourceTree = "<group>"; };
 		8C4C978526F1362B00EC518E /* ListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListViewModel.swift; sourceTree = "<group>"; };
 		8C951DD226E9619400B4A148 /* Schedule.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Schedule.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C951DD526E9619400B4A148 /* ScheduleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleApp.swift; sourceTree = "<group>"; };
@@ -90,7 +101,7 @@
 		8C4C978226F1362B00EC518E /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				8C4C978326F1362B00EC518E /* ItemModel.swift */,
+				8C4C978326F1362B00EC518E /* TaskItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -122,6 +133,7 @@
 		8C951DD426E9619400B4A148 /* Schedule */ = {
 			isa = PBXGroup;
 			children = (
+				1F59744727089B1200F0FF2A /* Schedule.entitlements */,
 				8C951DD526E9619400B4A148 /* ScheduleApp.swift */,
 				8C951DE426E961C200B4A148 /* Views */,
 				8C951DE526E961CB00B4A148 /* ViewsModels */,
@@ -174,6 +186,8 @@
 			isa = PBXGroup;
 			children = (
 				8C951DF626E9647800B4A148 /* DataService.swift */,
+				1F59744827089BF100F0FF2A /* NotificationManager.swift */,
+				1FD9A56C2709D14F000AF637 /* TaskNotificationManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -181,6 +195,8 @@
 		8C951DE826E961EA00B4A148 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				1FD9A56E2709D8B4000AF637 /* Palatino.ttf */,
+				1FD9A5722709E0CD000AF637 /* Palatino-Bold.otf */,
 				8C951E0026E9B3AA00B4A148 /* schedule.json */,
 			);
 			path = Data;
@@ -189,6 +205,7 @@
 		8C951DE926E961F200B4A148 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				1FD9A5702709DC21000AF637 /* Extensions.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -281,6 +298,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1FD9A5732709E0CD000AF637 /* Palatino-Bold.otf in Resources */,
+				1FD9A56F2709D8B4000AF637 /* Palatino.ttf in Resources */,
 				8C951DDD26E9619600B4A148 /* Preview Assets.xcassets in Resources */,
 				8C951DDA26E9619600B4A148 /* Assets.xcassets in Resources */,
 				8C951E0126E9B3AA00B4A148 /* schedule.json in Resources */,
@@ -295,6 +314,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8C951DF726E9647800B4A148 /* DataService.swift in Sources */,
+				1FD9A56D2709D14F000AF637 /* TaskNotificationManager.swift in Sources */,
 				1F8CAED826F8B98A00474D16 /* AddScheduleView.swift in Sources */,
 				8C951DEF26E9640000B4A148 /* ScheduleListView.swift in Sources */,
 				1F8CAEDB26F8C21000474D16 /* ImagePickerView.swift in Sources */,
@@ -306,11 +326,13 @@
 				8C4C978926F1362B00EC518E /* ListRowView.swift in Sources */,
 				8C951DD826E9619400B4A148 /* ScheduleTabView.swift in Sources */,
 				8C951DED26E9636400B4A148 /* ScheduleFeatured.swift in Sources */,
+				1FD9A5712709DC21000AF637 /* Extensions.swift in Sources */,
 				8C951DF326E9643A00B4A148 /* ScheduleHighlights.swift in Sources */,
 				8C4C978726F1362B00EC518E /* ListView.swift in Sources */,
 				8CBC2DC127055A4F00633B62 /* ColorPickerView.swift in Sources */,
+				1F59744927089BF100F0FF2A /* NotificationManager.swift in Sources */,
 				8C951DF526E9646200B4A148 /* Schedule.swift in Sources */,
-				8C4C978A26F1362B00EC518E /* ItemModel.swift in Sources */,
+				8C4C978A26F1362B00EC518E /* TaskItem.swift in Sources */,
 				8C951DD626E9619400B4A148 /* ScheduleApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -439,6 +461,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Schedule/Schedule.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Schedule/Preview Content\"";
 				DEVELOPMENT_TEAM = RF63ZP23GS;
@@ -451,6 +475,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.newstreet.schedule;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -461,6 +486,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Schedule/Schedule.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Schedule/Preview Content\"";
 				DEVELOPMENT_TEAM = RF63ZP23GS;
@@ -473,6 +500,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.newstreet.schedule;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

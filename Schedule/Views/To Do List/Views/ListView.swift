@@ -12,6 +12,9 @@ struct ListView: View {
     @EnvironmentObject var listViewModel: ListViewModel
     @State private var editMode = EditMode.inactive
     
+    @State var showAddView = false
+    @State var isEditMode = false
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -21,30 +24,48 @@ struct ListView: View {
                 } else {
                     List {
                         ForEach(listViewModel.items) { item in
-                            ListRowView(item: item)
-                                .onTapGesture {
-                                    withAnimation(.linear) {
-                                        listViewModel.updateItem(item: item)
-                                    }
+                            ListRowView(item: item) {
+                                withAnimation(.linear) {
+                                    listViewModel.updateItem(item: item)
                                 }
+                            } editBtn: {
+                                self.listViewModel.selectedItemToEdit = item
+                                self.isEditMode = true
+                                self.showAddView = true
+                            }
                         }
                         .onDelete(perform: listViewModel.deleteItem)
                         .onMove(perform: listViewModel.moveItem)
                     }
                     .listStyle(PlainListStyle())
+                    
+                    
+                    //push addView
+                    NavigationLink(isActive: $showAddView) {
+                        AddView(isEditMode: self.isEditMode)
+                    } label: {
+                        Spacer()
+                            .frame(width: 1, height: 1)
+                    }
                 }
             }
             .navigationTitle("Tasks")
-            .font(Font.custom("Palentino", size: 16))
+            .palatinoFont(16, weight: .bold)
             .environment(\.editMode, $editMode)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     EditButton(editMode: $editMode)
-                        .font(Font.custom("Palentino", size: 14))
+                        .palatinoFont(14, weight: .regular)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink("New", destination: AddView())
-                        .font(Font.custom("Palentino", size: 16))
+                    Button {
+                        self.listViewModel.selectedItemToEdit = nil
+                        self.isEditMode = false
+                        self.showAddView = true
+                    } label: {
+                        Text("New")
+                            .palatinoFont(16, weight: .bold)
+                    }
                 }
             }
         }
@@ -64,10 +85,10 @@ struct EditButton: View {
         } label: {
             if let isEditing = editMode.isEditing, isEditing {
                 Text("Done")
-                    .font(Font.custom("Palentino", size: 16))
+                    .palatinoFont(16, weight: .bold)
             } else {
                 Text("Edit")
-                    .font(Font.custom("Palentino", size: 16))
+                    .palatinoFont(16, weight: .bold)
             }
         }
     }

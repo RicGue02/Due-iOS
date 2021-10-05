@@ -9,119 +9,157 @@ import SwiftUI
 
 struct ScheduleFeaturedView: View {
     
-    
     @EnvironmentObject var model:ScheduleModel
     @State var isDetailViewShowing = false
-    @State var tabSelectionIndex = 0
+    @State var tabSelectionIndex:Int = 0
     @State var addSchedule = false
+    @State var displayedSchedule:Schedule? = nil
     
     @State var animate: Bool = false
     let secondaryAccentColor = Color(.blue)
     
     var body: some View {
-        
         VStack(alignment: .leading, spacing: 0) {
-            
             if !model.schedules.isEmpty {
-                Text("Featured Subjects")
-                    .bold()
-                    .padding(.leading)
-                    .padding(.top, 40)
-                    .font(Font.custom("Palentino Heavy", size: 24))
-                
-                GeometryReader { geo in
-                    TabView (selection: $tabSelectionIndex) {
-                        // Loop through each schedule
-                        ForEach (0..<model.schedules.count) { index in
-                            // Only show those that should be featured
-                            if model.schedules[index].featured == true {
-                                
-                                // Recipe card button
-                                Button(action: {
-                                    // Show the schedule detail sheet
-                                    self.isDetailViewShowing = true
-                                    
-                                }, label: {
-                                    
-                                    // schedule card
-                                    ZStack {
-                                        Rectangle()
-                                            .foregroundColor(.white)
-                                        
-                                        VStack(spacing: 0) {
-                                            Image(uiImage: model.schedules[index].getImage(width: 600))
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(height: geo.size.height - 100)
-                                                .clipped()
-                                        }
-                                        .overlay(
-                                            VStack {
-                                                Text(model.schedules[index].name)
-                                                    .font(Font.custom("Palentino", size: 15))
-                                                    .frame(maxWidth: .infinity, alignment: .center)
-                                                    .padding(8)
-                                                    .background(Color.white)
+                if !model.featuredSchedules.isEmpty {
+                    Text("Featured Subjects")
+                        .palatinoFont(24, weight: .bold)
+                        .padding(.leading)
+                        .padding(.top, 40)
+                    
+                    GeometryReader { geo in
+                        TabView (selection: $tabSelectionIndex) {
+                            // Loop through each schedule
+                            ForEach(Array(zip(model.featuredSchedules.indices, model.featuredSchedules)), id: \.0) { index, item in
+                                if item.featured! {
+                                    VStack {
+                                        // Recipe card button
+                                        Button(action: {
+                                            // Show the schedule detail sheet
+                                            self.model.selectedSchedule = item
+                                            self.isDetailViewShowing = true
+                                            
+                                        }, label: {
+                                            
+                                            // schedule card
+                                            ZStack {
+                                                Rectangle()
+                                                    .foregroundColor(.white)
+                                                
+                                                VStack(spacing: 0) {
+                                                    Image(uiImage: item.getImage(width: 600))
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fill)
+                                                        .frame(height: geo.size.height - 100)
+                                                        .clipped()
+                                                }
+                                                .overlay(
+                                                    VStack {
+                                                        Text(item.name)
+                                                            .palatinoFont(15, weight: .regular)
+                                                            .frame(maxWidth: .infinity, alignment: .center)
+                                                            .padding(8)
+                                                            .background(Color.white)
+                                                    }
+                                                    
+                                                    ,alignment: .bottom
+                                                )
                                             }
                                             
-                                            ,alignment: .bottom
-                                        )
+                                        })
+                                        .tag(item.id)
+                                        .sheet(isPresented: $isDetailViewShowing) {
+                                            // Show the schedule Detail View
+                                            ScheduleDetailView()
+                                                .environmentObject(model)
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
+                                        .frame(width: geo.size.width - 40, height: geo.size.height - 100, alignment: .center)
+                                        .cornerRadius(15)
+                                        .shadow(color: Color(.sRGB, red: 0, green: 0, blue: 0, opacity: 0.5), radius: 10, x: -5, y: 5)
+                                        .onAppear {
+                                            self.displayedSchedule = item
+                                        }
+
                                     }
-                                    
-                                })
-                                .tag(index)
-                                .sheet(isPresented: $isDetailViewShowing) {
-                                    // Show the schedule Detail View
-                                    ScheduleDetailView(schedule: model.schedules[index])
+                                    .tag(index)
                                 }
-                                .buttonStyle(PlainButtonStyle())
-                                .frame(width: geo.size.width - 40, height: geo.size.height - 100, alignment: .center)
-                                .cornerRadius(15)
-                                .shadow(color: Color(.sRGB, red: 0, green: 0, blue: 0, opacity: 0.5), radius: 10, x: -5, y: 5)
-                                
                             }
                         }
-                        
+                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
+                        .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
                     }
-                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
-                    .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+                    .frame(minHeight: 480)
+                    
+                    if let displayedSchedule = displayedSchedule {
+                        VStack (alignment: .leading, spacing: 10) {
+                            VStack {
+                                Text("Today")
+                                    .palatinoFont(12, weight: .regular)
+                                ForEach(displayedSchedule.times, id:\.self) { subjectTime in
+                                    if subjectTime.day_index == getTodayIndex() {
+                                        Text(subjectTime.time.getString())
+                                            .palatinoFont(26, weight: .bold)
+                                    }
+                                }
+                            }.frame(maxWidth: .infinity)
+                            
+                            Divider()
+                            
+                            ScrollView(showsIndicators: false) {
+                                VStack(alignment: .leading) {
+                                    Text("Institución:")
+                                        .palatinoFont(18, weight: .bold)
+                                    Text(displayedSchedule.description)
+                                        .palatinoFont(15, weight: .regular)
+                                        .padding(.leading, 16)
+                                    
+                                    Text("Profesor(a):")
+                                        .palatinoFont(18, weight: .bold)
+                                    ScheduleHighlights(highlights: displayedSchedule.highlights)
+                                        .palatinoFont(16, weight: .regular)
+                                        .padding(.leading, 16)
+                                    
+                                    Text("Tiempo:")
+                                        .palatinoFont(18, weight: .bold)
+                                    
+                                    ForEach(displayedSchedule.times, id:\.self) { subjectTime in
+                                        Label {
+                                            Text(subjectTime.day_index.dayName + " at " + subjectTime.time.getString())
+                                                .palatinoFont(15, weight: .regular)
+                                        } icon: {
+                                            Image(systemName: "clock")
+                                        }
+                                    }
+                                    .padding(.leading, 16)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            
+                        }
+                        .padding([.leading, .bottom])
+                    }
+                    
+                }else {
+                   
+                    Text("No Subjects Today!")
+                        .font(.title.bold())
                     
                 }
                 
-                
-                if model.schedules[tabSelectionIndex].featured == true {
-                    VStack (alignment: .leading, spacing: 10) {
-                        Text("Institución:")
-                            .font(Font.custom("Palentino Heavy", size: 16))
-                        Text(model.schedules[tabSelectionIndex].description)
-                            .font(Font.custom("Palentino", size: 15))
-                        Text("Profesor(a):")
-                            .font(Font.custom("Palentino Heavy", size: 16))
-                        ScheduleHighlights(highlights: model.schedules[tabSelectionIndex].highlights)
-                        
-                    }
-                    .padding([.leading, .bottom])
-                }
-                
-                
-                
-            }
-            else {
+            }else {
                 VStack(spacing: 10) {
                     Text("Welcome to Balance!")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .font(Font.custom("Palentino", size: 16))
+                        .palatinoFont(26, weight: .bold)
 
-                    Text("Add yor subject so you can keep everything tight")
+                    Text("Add your subject so you can keep everything tight")
                         .padding(.bottom, 20)
-                        .font(Font.custom("Palentino", size: 14))
+                        .palatinoFont(14, weight: .regular)
                     
                     Divider()
                     Spacer()
                     
                     //aún no me decido de la imagen/logo
-                    
                     Image("med")
                         .resizable()
                         .scaledToFit()
@@ -137,10 +175,9 @@ struct ScheduleFeaturedView: View {
                                 .font(.title2)
                         })
                         Text("New subject!")
-                            .font(Font.custom("Palentino", size: 14))
+                            .palatinoFont(14, weight: .bold)
                             .onTapGesture {self.addSchedule = true}
                             .foregroundColor(.blue)
-                            .font(.largeTitle)
                     }
                     .frame(height: 55)
                     .frame(maxWidth: .infinity)
@@ -158,19 +195,22 @@ struct ScheduleFeaturedView: View {
         }
         .frame(maxWidth: 400)
         .multilineTextAlignment(.center)
-        .padding(40)
+        .padding(.horizontal, 20)
         .onAppear(perform: addAnimation)
-        .onAppear(perform: {setFeaturedIndex()})
-        .sheet(isPresented: $addSchedule) {AddScheduleView().environmentObject(model)}
+        //.onAppear(perform: {setFeaturedIndex()})
+        .sheet(isPresented: $addSchedule) {
+            AddScheduleView()
+            .environmentObject(model)
+        }
     }
     
-    func setFeaturedIndex() {
-        // Find the index of first schedule that is featured
-        let index = model.schedules.firstIndex { (schedule) -> Bool in
-            return true ///schedule.featured
-        }
-        tabSelectionIndex = index ?? 0
-    }
+//    func setFeaturedIndex() {
+//        // Find the index of first schedule that is featured
+//        let index = model.schedules.firstIndex { (schedule) -> Bool in
+//            return true ///schedule.featured
+//        }
+//        tabSelectionIndex = index ?? 0
+//    }
     
     func addAnimation() {
         guard !animate else { return }

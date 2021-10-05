@@ -6,14 +6,18 @@
 //
 
 import Foundation
+import SwiftUI
 
 class ListViewModel: ObservableObject {
     
-    @Published var items: [ItemModel] = [] {
+    @Published var selectedItemToEdit: TaskItem? = nil
+    @Published var items: [TaskItem] = [] {
         didSet {
             saveItems()
         }
     }
+    
+    
     
     let itemsKey: String = "items_list"
     
@@ -24,7 +28,7 @@ class ListViewModel: ObservableObject {
     func getItems() {
         guard
             let data = UserDefaults.standard.data(forKey: itemsKey),
-            let savedItems = try? JSONDecoder().decode([ItemModel].self, from: data)
+            let savedItems = try? JSONDecoder().decode([TaskItem].self, from: data)
         else { return }
 
         self.items = savedItems
@@ -38,12 +42,25 @@ class ListViewModel: ObservableObject {
         items.move(fromOffsets: from, toOffset: to)
     }
     
-    func addItem(title: String) {
-        let newItem = ItemModel(title: title, isCompleted: false)
-        items.append(newItem)
+    func addItem(task: TaskItem) {
+        ///let newItem = ItemModel(title: title, isCompleted: false)
+        items.append(task)
+        NotificationManager.default.taskSchedule(task)
+    }
+    func savedEdited(task: TaskItem) {
+        for (index, item) in items.enumerated() {
+            if item.id == task.id {
+                items[index] = task
+                NotificationManager.default.taskSchedule(task)
+                break
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.selectedItemToEdit = nil
+        }
     }
     
-    func updateItem(item: ItemModel) {
+    func updateItem(item: TaskItem) {
         if let index = items.firstIndex(where: { $0.id == item.id }) {
             items[index] = item.updateCompletion()
         }

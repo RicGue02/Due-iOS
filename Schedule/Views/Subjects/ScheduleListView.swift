@@ -13,6 +13,7 @@ struct ScheduleListView: View {
     @EnvironmentObject var model:ScheduleModel
     @State var addSchedule = false
     @State var showImages = false
+    @State var showScheduleDetails = false
     
     var body: some View {
         
@@ -23,6 +24,7 @@ struct ScheduleListView: View {
                 HStack(spacing: 15) {
                     Button(action: {
                         // Implementar la función de meter materias
+                        self.model.selectedSchedule = nil
                         self.addSchedule = true
                     }, label: {
                         Image(systemName: "plus.circle")
@@ -32,55 +34,62 @@ struct ScheduleListView: View {
                     Text("All Subjects")
                         .bold()
                         .padding(.top, 40)
-                        .font(Font.custom("Palentino", size: 24))
+                        .palatinoFont(24, weight: .bold)
                 }
-                
-//                Divider()
                 
                 ScrollView {
                     VStack {
                         ForEach(model.schedules) { item in
-                            NavigationLink(
-                                destination: ScheduleDetailView(schedule: item),
-                                label: {
+                            // MARK: Row item
+                            HStack(spacing: 20.0) {
+                                if showImages {
+                                    Image(uiImage: item.getImage(width: 100))
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 50, height: 50, alignment: .center)
+                                        .clipped()
+                                        .cornerRadius(5)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                                        )
+                                }else {
+                                    Spacer()
+                                        .frame(width: 50, height: 50, alignment: .center)
+                                        .cornerRadius(5)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                                        )
+                                }
+                                
+                                VStack (alignment: .leading) {
+                                    Text(item.name)
+                                        .foregroundColor(.black)
+                                        .palatinoFont(16, weight: .regular)
                                     
-                                    // MARK: Row item
-                                    HStack(spacing: 20.0) {
-                                        if showImages {
-                                            Image(uiImage: item.getImage(width: 100))
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(width: 50, height: 50, alignment: .center)
-                                                .clipped()
-                                                .cornerRadius(5)
-                                                .overlay(
-                                                    RoundedRectangle(cornerRadius: 4)
-                                                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                                                )
-                                        }else {
-                                            Spacer()
-                                                .frame(width: 50, height: 50, alignment: .center)
-                                                .cornerRadius(5)
-                                                .overlay(
-                                                    RoundedRectangle(cornerRadius: 4)
-                                                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                                                )
-                                        }
-                                        
-                                        VStack (alignment: .leading) {
-                                            Text(item.name)
-                                                .foregroundColor(.black)
-                                                .font(Font.custom("Palentino", size: 16))
-                                            
-                                            ScheduleHighlights(highlights: item.highlights)
-                                                .foregroundColor(.black)
-                                            
-                                        }
-                                        Spacer()
-                                    }
-                                })
-                                .padding(.bottom, 10)
+                                    ScheduleHighlights(highlights: item.highlights)
+                                        .foregroundColor(.black)
+                                    
+                                }
+                                Spacer()
+                            }
+                            .onTapGesture {
+                                self.model.selectedSchedule = item
+                                self.showScheduleDetails = true
+                            }
                         }
+                        .padding(.bottom, 10)
+                        
+                        
+                        NavigationLink(isActive: $showScheduleDetails) {
+                            ScheduleDetailView(navigationBar: true)
+                                .navigationBarTitle(Text(self.model.selectedSchedule?.name ?? ""), displayMode: .inline)
+                        } label: {
+                            Spacer()
+                                .frame(width: 0, height: 0)
+                        }
+
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }

@@ -100,6 +100,14 @@ extension Date {
     func getString() -> String {
         let date = self
         let formatter = DateFormatter()
+        ///formatter.dateStyle = .long
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+    
+    func getFullDateString() -> String {
+        let date = self
+        let formatter = DateFormatter()
         formatter.dateStyle = .long
         formatter.timeStyle = .short
         return formatter.string(from: date)

@@ -11,38 +11,76 @@ private let saved_schedules_key = "saved_schedules_key"
 class ScheduleModel: ObservableObject {
     
     @Published var schedules = [Schedule]()
+    @Published var selectedSchedule:Schedule?
+    @Published var featuredSchedules = [Schedule]()
+    
     
     init() {
         // Create an instance of data service and get the data
         ///self.schedules = DataService.getLocalData()
         self.getSavedSchedules { list in
-            DispatchQueue.main.async {
-                self.schedules = list
+            self.updateUI(list)
+        }
+    }
+    
+    private func updateUI(_ list: [Schedule]) {
+        DispatchQueue.main.async {
+            self.schedules = list
+            
+            self.featuredSchedules.removeAll()
+            for item in list {
+                if (item.featured ?? false) {
+                    self.featuredSchedules.append(item)
+                }
             }
         }
     }
     
     
-    func saveSchedule(_ schedule: Schedule) {
+    func updateSchedules(_ schedule: Schedule, isEditMode: Bool = false, removeIt:Bool = false) {
         DispatchQueue.global().async {
             self.getSavedSchedules { list in
+                
                 var newList = list
                 if newList.isEmpty {
                     newList = [schedule]
+                    NotificationManager.default.subjectSchedule(schedule)
                 }else {
-                    newList.insert(schedule, at: 0)
+                    
+                    if removeIt {
+                        newList.removeAll(where: {$0.id == schedule.id})
+                        for item in schedule.times {
+                            NotificationManager.default.removeNotificationRequest(item.id)
+                        }
+                        
+                    }else if isEditMode {
+                        //Update Current Item
+                        for (index, item) in newList.enumerated() {
+                            if item.id == schedule.id {
+                                newList[index] = schedule
+                                NotificationManager.default.subjectSchedule(schedule)
+                                break
+                            }
+                        }
+                        
+                    }else {
+                        //Insert New Item
+                        newList.insert(schedule, at: 0)
+                        NotificationManager.default.subjectSchedule(schedule)
+                    }
                 }
+                
+                
                 //Save
                 do {
                     let data = try JSONEncoder().encode(newList)
                     UserDefaults.standard.setValue(data, forKey: saved_schedules_key)
+                    self.updateUI(newList)
                 }catch {
                     print("Failed to save this schedule")
                 }
                 
-                DispatchQueue.main.async {
-                    self.schedules = newList
-                }
+                
             }
         }
     }

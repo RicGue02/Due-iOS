@@ -14,21 +14,20 @@ struct ScheduleHighlights: View {
     init(highlights:[String]) {
         
         // Loop through the highlights and build the string
-        for index in 0..<highlights.count {
-            
+        for item in highlights {
             // If this is the last item, don't add a comma
-            if index == highlights.count - 1 {
-                allHighlights += highlights[index]
+            if item == highlights.last{
+                allHighlights += item
             }
             else {
-                allHighlights += highlights[index] + ", "
+                allHighlights += item + ", "
             }
         }
     }
     
     var body: some View {
         Text(allHighlights)
-            .font(Font.custom("Palentino", size: 15))
+            .palatinoFont(15, weight: .regular)
     }
 }
 

@@ -42,7 +42,7 @@ struct NoItemsView: View {
                     .scaleEffect(animate ? 1.1 : 1.0)
                     .offset(y: animate ? -7 : 0)
             }
-            .font(Font.custom("Palentino", size: 14))
+            .palatinoFont(14, weight: .regular)
             .frame(maxWidth: 400)
             .multilineTextAlignment(.center)
             .padding(40)
