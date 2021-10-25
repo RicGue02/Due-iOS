@@ -31,25 +31,27 @@ struct ScheduleDetailView: View {
                             if let urls = URL(string: schedule.urls) {
                                 Link(destination: urls) {
                                     Image(systemName: "link.circle")
-                                        .foregroundColor(.black)
+                                        .foregroundColor(.blue)
                                         .font(.largeTitle)
                                         .position(x: 360, y: 35)
                                 }
                             }
                         }
+
                         
                         // MARK: Schedule title
                         Text(schedule.name)
                             .bold()
                             .padding(.top, 20)
                             .padding(.leading)
-                            .palatinoFont(24, weight: .bold)
+                            //.palatinoFont(24, weight: .bold)
+                            .font(.system(size: 24,weight: .bold))
                         
                         HStack {
                             if let claseURL = URL(string: schedule.clase) {
                                 Link(destination: claseURL) {
                                     Image(systemName: "video.circle")
-                                        .foregroundColor(.black)
+                                        .foregroundColor(.blue)
                                         .font(.largeTitle)
                                         .position(x: 60, y: 20)
                                 }
@@ -57,29 +59,27 @@ struct ScheduleDetailView: View {
                             if let recursosURL = URL(string: schedule.recursos) {
                                 Link(destination: recursosURL) {
                                     Image(systemName: "person.crop.circle")
-                                        .foregroundColor(.black)
+                                        .foregroundColor(.blue)
                                         .font(.largeTitle)
                                         .position(x: 60, y: 20)
                                 }
                             }
-                            
-                            
                             if let chatURL = URL(string: schedule.chat) {
                                 Link(destination: chatURL) {
                                     Image(systemName: "phone.circle")
-                                        .foregroundColor(.black)
+                                        .foregroundColor(.blue)
                                         .font(.largeTitle)
                                         .position(x: 60, y: 20)
                                 }
-                            }
-                            
+                            }  
                         }
                         .padding(5)
                         
                         // MARK: Links
                         VStack(alignment: .leading) {
                             Text("Schedule")
-                                .palatinoFont(16, weight: .bold)
+                                //.palatinoFont(16, weight: .bold)
+                                .font(.system(size: 16,weight: .bold))
                                 .padding([.bottom, .top], 5)
                             
                             ForEach(schedule.times, id:\.self){ subjectTime in
@@ -89,7 +89,8 @@ struct ScheduleDetailView: View {
                                     Image(systemName: "clock")
                                 }
                                 .padding(.bottom, 5)
-                                .palatinoFont(15, weight: .regular)
+                                //.palatinoFont(15, weight: .regular)
+                                .font(.system(size: 15,weight: .regular))
                             }
                             
                         }
@@ -101,26 +102,31 @@ struct ScheduleDetailView: View {
                         // MARK: More Information
                         VStack(alignment: .leading) {
                             Text("Aditional Information")
-                                .palatinoFont(16, weight: .bold)
+                                //.palatinoFont(16, weight: .bold)
+                                .font(.system(size: 16,weight: .bold))
                                 .padding([.bottom, .top], 5)
                             
                             ForEach(schedule.moreinfo, id:\.self) { info in
                                 Text(info)
-                                    .palatinoFont(15, weight: .regular)
+                                    //.palatinoFont(15, weight: .regular)
+                                    .font(.system(size: 15,weight: .regular))
                                     .padding(.bottom, 5)
                             }
                         }
                         .padding(.horizontal)
-                        
                     }
                 }
+            
+                
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
                             self.edit()
                         } label: {
                             Label("Edit", systemImage: "pencil")
-                                .palatinoFont(16, weight: .bold)
+                                //.palatinoFont(16, weight: .bold)
+                                .font(.system(size: 16,weight: .bold))
+                                .padding()
                         }
                     }
                 }
@@ -131,7 +137,7 @@ struct ScheduleDetailView: View {
                                 self.edit()
                             } label: {
                                 Label("Edit", systemImage: "pencil")
-                                    .padding(4)
+                                    .padding(8)
                                     .background(Color.white)
                                     .clipShape(Capsule())
                             }
@@ -165,13 +171,5 @@ struct ScheduleDetailView: View {
     }
 }
 
-struct ScheduleDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        
-        // Create a dummy subject and pass it into the detail view so that we can see a preview
-        ///let model = ScheduleModel()
-        
-        ScheduleDetailView()
-    }
-}
+
 

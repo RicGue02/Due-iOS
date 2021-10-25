@@ -18,7 +18,7 @@ struct ScheduleTabView: View {
                     VStack {
                         Image(systemName: "calendar")
                         Text("Schedule")
-                    }
+                    }.background(Color(.systemGray6))
                 }
            
             ListView()
@@ -26,7 +26,7 @@ struct ScheduleTabView: View {
                     VStack {
                         Image(systemName: "list.star")
                         Text("Tasks")
-                    }
+                    }.background(Color(.systemGray6))
                 }
             
             ScheduleListView()
@@ -34,7 +34,7 @@ struct ScheduleTabView: View {
                     VStack {
                         Image(systemName: "books.vertical")
                         Text("Subjects")
-                    }
+                    }.background(Color(.systemGray6))
                 }
         }
         .environmentObject(ScheduleModel())

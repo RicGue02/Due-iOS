@@ -42,7 +42,8 @@ struct NoItemsView: View {
                     .scaleEffect(animate ? 1.1 : 1.0)
                     .offset(y: animate ? -7 : 0)
             }
-            .palatinoFont(14, weight: .regular)
+            //.palatinoFont(14, weight: .regular)
+            .font(.system(size: 14,weight: .regular))
             .frame(maxWidth: 400)
             .multilineTextAlignment(.center)
             .padding(40)
@@ -54,17 +55,11 @@ struct NoItemsView: View {
     func addAnimation() {
         guard !animate else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            withAnimation(
-                Animation
-                    .easeInOut(duration: 2.0)
-                    .repeatForever()
-            ) {
+            withAnimation(Animation.easeInOut(duration: 2.0).repeatForever()) {
                 animate.toggle()
             }
         }
     }
-    
-// tomar la animación 
 }
 
 struct NoItemsView_Previews: PreviewProvider {

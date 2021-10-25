@@ -19,9 +19,6 @@ struct AddScheduleView: View {
         UITextView.appearance().backgroundColor = .clear
     }
     
-    
-    
-    
     @State private var nameText = ""
     @State private var descriptionText = ""
     @State private var highlightsText = ""
@@ -57,13 +54,12 @@ struct AddScheduleView: View {
                                             .font(.title)
                                     }
                                 }
-                            )
-                            .onTapGesture {
-                                self.isShowPhotoLibrary = true
-                            }
+                            ).onTapGesture {self.isShowPhotoLibrary = true}
+                        
                         Text("Add image")
                             .foregroundColor(.blue)
-                            .palatinoFont(12, weight: .regular)
+                            //.palatinoFont(12, weight: .regular)
+                            .font(.system(size: 12,weight: .regular))
                             .onTapGesture {self.isShowPhotoLibrary = true}
                     }
                     
@@ -85,7 +81,8 @@ struct AddScheduleView: View {
                         self.addSchedule()
                     } label: {
                         Text(isEditMode ? "Save" : "Add")
-                            .palatinoFont(16, weight: .bold)
+                            //.palatinoFont(16, weight: .bold)
+                            .font(.system(size: 16,weight: .bold))
                             .foregroundColor(Color.white)
                             .frame(height: 44)
                             .frame(maxWidth: .infinity)
@@ -116,21 +113,11 @@ struct AddScheduleView: View {
                     }
                     .padding()
                 }
-                
-            }
-            
-            ,alignment: .topTrailing
-        )
+            },alignment: .topTrailing)
         .padding()
-        .onTapGesture {
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        }
-        .onAppear {
-            updateContent()
-        }
-        .sheet(isPresented: $isShowPhotoLibrary) {
-            ImagePicker(sourceType: .photoLibrary, selectedImage: self.$image)
-        }
+        .onTapGesture {UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)}
+        .onAppear {updateContent()}
+        .sheet(isPresented: $isShowPhotoLibrary) {ImagePicker(sourceType: .photoLibrary, selectedImage: self.$image)}
     }
     
     
@@ -274,7 +261,8 @@ private struct MainView:View {
             inputItem(textBinding: $moreInfoText, title: "More Info")
             
         }
-        .palatinoFont(14, weight: .regular)
+        //.palatinoFont(14, weight: .regular)
+        .font(.system(size: 14,weight: .regular))
     }
 }
 
@@ -295,11 +283,13 @@ struct SelectedDates: View {
                             timesArray.remove(at: index)
                         }
                 }
-                .palatinoFont(14, weight: .regular)
+                //.palatinoFont(14, weight: .regular)
+                .font(.system(size: 14,weight: .regular))
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .palatinoFont(14, weight: .regular)
+        //.palatinoFont(14, weight: .regular)
+        .font(.system(size: 14,weight: .regular))
     }
 }
 
@@ -320,7 +310,8 @@ private struct inputItem: View {
                 .background(bg)
                 .clipShape(RoundedRectangle(cornerRadius: 6))
         }
-        .palatinoFont(14, weight: .regular)
+        //.palatinoFont(14, weight: .regular)
+        .font(.system(size: 14,weight: .regular))
     }
     
 }

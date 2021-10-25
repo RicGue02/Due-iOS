@@ -34,7 +34,8 @@ struct ScheduleListView: View {
                     Text("All Subjects")
                         .bold()
                         .padding(.top, 40)
-                        .palatinoFont(24, weight: .bold)
+                        //.palatinoFont(24, weight: .bold)
+                        .font(.system(size: 24,weight: .bold))
                 }
                 
                 ScrollView {
@@ -49,28 +50,24 @@ struct ScheduleListView: View {
                                         .frame(width: 50, height: 50, alignment: .center)
                                         .clipped()
                                         .cornerRadius(5)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 4)
-                                                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                                        )
-                                }else {
+                                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.gray.opacity(0.2), lineWidth: 1))
+                                }
+                                else {
                                     Spacer()
                                         .frame(width: 50, height: 50, alignment: .center)
                                         .cornerRadius(5)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 4)
-                                                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                                        )
+                                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.gray.opacity(0.2), lineWidth: 1))
                                 }
+                                
+                                // ACA QUITE EL "foregroundColor"
                                 
                                 VStack (alignment: .leading) {
                                     Text(item.name)
-                                        .foregroundColor(.black)
-                                        .palatinoFont(16, weight: .regular)
-                                    
+                                        //.foregroundColor(.black)
+                                        //.palatinoFont(16, weight: .regular)
+                                        .font(.system(size: 16,weight: .regular))
                                     ScheduleHighlights(highlights: item.highlights)
-                                        .foregroundColor(.black)
-                                    
+                                        //.foregroundColor(.black)
                                 }
                                 Spacer()
                             }
@@ -78,10 +75,10 @@ struct ScheduleListView: View {
                                 self.model.selectedSchedule = item
                                 self.showScheduleDetails = true
                             }
+                            Divider()
                         }
                         .padding(.bottom, 10)
-                        
-                        
+
                         NavigationLink(isActive: $showScheduleDetails) {
                             ScheduleDetailView(navigationBar: true)
                                 .navigationBarTitle(Text(self.model.selectedSchedule?.name ?? ""), displayMode: .inline)
@@ -89,22 +86,15 @@ struct ScheduleListView: View {
                             Spacer()
                                 .frame(width: 0, height: 0)
                         }
-
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
+
                 }
             }
             .navigationBarHidden(true)
             .padding(.leading)
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                    self.showImages = true
-                }
-            }
-            .sheet(isPresented: $addSchedule) {
-                AddScheduleView()
-                    .environmentObject(model)
-            }
+            .onAppear {DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {self.showImages = true}}
+            .sheet(isPresented: $addSchedule) {AddScheduleView() .environmentObject(model)}
         }
     }
 }

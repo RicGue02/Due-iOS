@@ -38,8 +38,7 @@ struct ListView: View {
                         .onMove(perform: listViewModel.moveItem)
                     }
                     .listStyle(PlainListStyle())
-                    
-                    
+                     
                     //push addView
                     NavigationLink(isActive: $showAddView) {
                         AddView(isEditMode: self.isEditMode)
@@ -50,7 +49,8 @@ struct ListView: View {
                 }
             }
             .navigationTitle("Tasks")
-            .palatinoFont(16, weight: .bold)
+            //.palatinoFont(16, weight: .bold)
+            .font(.system(size: 16,weight: .bold))
             .environment(\.editMode, $editMode)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -85,10 +85,13 @@ struct EditButton: View {
         } label: {
             if let isEditing = editMode.isEditing, isEditing {
                 Text("Done")
-                    .palatinoFont(16, weight: .bold)
+                    //.palatinoFont(16, weight: .bold)
+                    .font(.system(size: 16,weight: .bold))
+
             } else {
                 Text("Edit")
-                    .palatinoFont(16, weight: .bold)
+                    //.palatinoFont(16, weight: .bold)
+                    .font(.system(size: 16,weight: .bold))
             }
         }
     }

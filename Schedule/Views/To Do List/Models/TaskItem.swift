@@ -42,10 +42,7 @@ struct TaskItem: Identifiable, Codable {
             }else {
                 remainingTimeString = "\(diffs.minute ?? 0) Minutes, \(diffs.second ?? 0) Seconds"
             }
-            
         }
-        
-        
         return remainingTimeString
     }
 }

@@ -16,9 +16,7 @@ class ListViewModel: ObservableObject {
             saveItems()
         }
     }
-    
-    
-    
+ 
     let itemsKey: String = "items_list"
     
     init() {

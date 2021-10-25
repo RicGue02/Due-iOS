@@ -27,12 +27,8 @@ struct ScheduleHighlights: View {
     
     var body: some View {
         Text(allHighlights)
-            .palatinoFont(15, weight: .regular)
+            //.palatinoFont(15, weight: .regular)
+            .font(.system(size: 15,weight: .regular))
     }
 }
 
-struct ScheduleHighlights_Previews: PreviewProvider {
-    static var previews: some View {
-        ScheduleHighlights(highlights: ["Probabilidades", "Swift", "POO"])
-    }
-}

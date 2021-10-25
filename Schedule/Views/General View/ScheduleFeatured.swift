@@ -23,7 +23,8 @@ struct ScheduleFeaturedView: View {
             if !model.schedules.isEmpty {
                 if !model.featuredSchedules.isEmpty {
                     Text("Featured Subjects")
-                        .palatinoFont(24, weight: .bold)
+                        //.palatinoFont(24, weight: .bold)
+                        .font(.system(size: 24,weight: .bold))
                         .padding(.leading)
                         .padding(.top, 40)
                     
@@ -44,7 +45,7 @@ struct ScheduleFeaturedView: View {
                                             // schedule card
                                             ZStack {
                                                 Rectangle()
-                                                    .foregroundColor(.white)
+                                                    .foregroundColor(Color(.systemGray6))
                                                 
                                                 VStack(spacing: 0) {
                                                     Image(uiImage: item.getImage(width: 600))
@@ -56,10 +57,10 @@ struct ScheduleFeaturedView: View {
                                                 .overlay(
                                                     VStack {
                                                         Text(item.name)
-                                                            .palatinoFont(15, weight: .regular)
+                                                            //.palatinoFont(15, weight: .regular)
+                                                            .font(.system(size: 14,weight: .regular))
                                                             .frame(maxWidth: .infinity, alignment: .center)
                                                             .padding(8)
-                                                            .background(Color.white)
                                                     }
                                                     
                                                     ,alignment: .bottom
@@ -77,10 +78,7 @@ struct ScheduleFeaturedView: View {
                                         .frame(width: geo.size.width - 40, height: geo.size.height - 100, alignment: .center)
                                         .cornerRadius(15)
                                         .shadow(color: Color(.sRGB, red: 0, green: 0, blue: 0, opacity: 0.5), radius: 10, x: -5, y: 5)
-                                        .onAppear {
-                                            self.displayedSchedule = item
-                                        }
-
+                                        .onAppear {self.displayedSchedule = item}
                                     }
                                     .tag(index)
                                 }
@@ -94,12 +92,17 @@ struct ScheduleFeaturedView: View {
                     if let displayedSchedule = displayedSchedule {
                         VStack (alignment: .leading, spacing: 10) {
                             VStack {
+                                
+                                // Editar para display mas lindo 
                                 Text("Today")
-                                    .palatinoFont(12, weight: .regular)
+                                    //.palatinoFont(12, weight: .regular)
+                                    .font(.system(size: 12,weight: .regular))
+
                                 ForEach(displayedSchedule.times, id:\.self) { subjectTime in
                                     if subjectTime.day_index == getTodayIndex() {
                                         Text(subjectTime.time.getString())
-                                            .palatinoFont(26, weight: .bold)
+                                            //.palatinoFont(26, weight: .regular)
+                                            .font(.system(size: 18,weight: .thin))
                                     }
                                 }
                             }.frame(maxWidth: .infinity)
@@ -108,31 +111,44 @@ struct ScheduleFeaturedView: View {
                             
                             ScrollView(showsIndicators: false) {
                                 VStack(alignment: .leading) {
-                                    Text("Institución:")
-                                        .palatinoFont(18, weight: .bold)
+                                                                        
+                                    Text("Institution:")
+                                        //.palatinoFont(18, weight: .bold)
+                                        .font(.system(size: 16,weight: .regular))
                                     Text(displayedSchedule.description)
-                                        .palatinoFont(15, weight: .regular)
+                                        //.palatinoFont(15, weight: .regular)
+                                        .font(.system(size: 14,weight: .thin))
                                         .padding(.leading, 16)
                                     
-                                    Text("Profesor(a):")
-                                        .palatinoFont(18, weight: .bold)
-                                    ScheduleHighlights(highlights: displayedSchedule.highlights)
-                                        .palatinoFont(16, weight: .regular)
-                                        .padding(.leading, 16)
+                                    Spacer()
                                     
-                                    Text("Tiempo:")
-                                        .palatinoFont(18, weight: .bold)
+                                    Text("Date:")
+                                        //.palatinoFont(18, weight: .bold)
+                                        .font(.system(size: 16,weight: .regular))
                                     
                                     ForEach(displayedSchedule.times, id:\.self) { subjectTime in
                                         Label {
                                             Text(subjectTime.day_index.dayName + " at " + subjectTime.time.getString())
-                                                .palatinoFont(15, weight: .regular)
+                                                //.palatinoFont(15, weight: .regular)
+                                                .font(.system(size: 14,weight: .thin))
                                         } icon: {
                                             Image(systemName: "clock")
                                         }
                                     }
                                     .padding(.leading, 16)
+                                    
+                                    Spacer()
+                                    
+                                    Text("Teacher:")
+                                        //.palatinoFont(18, weight: .bold)
+                                        .font(.system(size: 16,weight: .regular))
+                                    
+                                    ScheduleHighlights(highlights: displayedSchedule.highlights)
+                                        //.palatinoFont(16, weight: .regular)
+                                        .font(.system(size: 14,weight: .thin))
+                                        .padding(.leading, 16)
                                 }
+                                                                
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             
@@ -149,12 +165,14 @@ struct ScheduleFeaturedView: View {
                 
             }else {
                 VStack(spacing: 10) {
-                    Text("Welcome to Balance!")
-                        .palatinoFont(26, weight: .bold)
+                    Text("Welcome to Due!")
+                        //.palatinoFont(26, weight: .bold)
+                        .font(.system(size: 26,weight: .regular))
 
                     Text("Add your subject so you can keep everything tight")
                         .padding(.bottom, 20)
-                        .palatinoFont(14, weight: .regular)
+                        //.palatinoFont(14, weight: .regular)
+                        .font(.system(size: 14,weight: .thin))
                     
                     Divider()
                     Spacer()
@@ -175,7 +193,8 @@ struct ScheduleFeaturedView: View {
                                 .font(.title2)
                         })
                         Text("New subject!")
-                            .palatinoFont(14, weight: .bold)
+                            //.palatinoFont(14, weight: .bold)
+                            .font(.system(size: 14,weight: .bold))
                             .onTapGesture {self.addSchedule = true}
                             .foregroundColor(.blue)
                     }
