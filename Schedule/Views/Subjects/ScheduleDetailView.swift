@@ -71,7 +71,7 @@ struct ScheduleDetailView: View {
                                         .font(.largeTitle)
                                         .position(x: 60, y: 20)
                                 }
-                            }  
+                            }
                         }
                         .padding(5)
                         

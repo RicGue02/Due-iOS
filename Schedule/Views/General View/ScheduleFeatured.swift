@@ -60,9 +60,10 @@ struct ScheduleFeaturedView: View {
                                                             //.palatinoFont(15, weight: .regular)
                                                             .font(.system(size: 14,weight: .regular))
                                                             .frame(maxWidth: .infinity, alignment: .center)
-                                                            .padding(8)
+                                                            .background(Color(.white))
+                                                            .foregroundColor(Color(.black))
+                                                            .padding(0)
                                                     }
-                                                    
                                                     ,alignment: .bottom
                                                 )
                                             }
@@ -165,6 +166,7 @@ struct ScheduleFeaturedView: View {
                 
             }else {
                 VStack(spacing: 10) {
+                    Spacer()
                     Text("Welcome to Due!")
                         //.palatinoFont(26, weight: .bold)
                         .font(.system(size: 26,weight: .regular))
@@ -196,6 +198,7 @@ struct ScheduleFeaturedView: View {
                             //.palatinoFont(14, weight: .bold)
                             .font(.system(size: 14,weight: .bold))
                             .onTapGesture {self.addSchedule = true}
+                            .background(animate ? secondaryAccentColor.opacity(0.0) : Color.white.opacity(0.0))
                             .foregroundColor(.blue)
                     }
                     .frame(height: 55)
@@ -209,6 +212,8 @@ struct ScheduleFeaturedView: View {
                         y: animate ? 50 : 30)
                     .scaleEffect(animate ? 1.1 : 1.0)
                     .offset(y: animate ? -7 : 0)
+                    
+                    Spacer()
                 }
             }
         }
@@ -217,10 +222,7 @@ struct ScheduleFeaturedView: View {
         .padding(.horizontal, 20)
         .onAppear(perform: addAnimation)
         //.onAppear(perform: {setFeaturedIndex()})
-        .sheet(isPresented: $addSchedule) {
-            AddScheduleView()
-            .environmentObject(model)
-        }
+        .sheet(isPresented: $addSchedule) {AddScheduleView() .environmentObject(model)}
     }
     
 //    func setFeaturedIndex() {
