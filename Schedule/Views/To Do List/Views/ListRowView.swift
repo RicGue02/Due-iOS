@@ -66,6 +66,7 @@ struct ListRowView: View {
                     //.palatinoFont(12, weight: .regular)
                     .font(.system(size: 10,weight: .thin))
                     .multilineTextAlignment(.center)
+                    .frame(width: 60)
 
             }
             

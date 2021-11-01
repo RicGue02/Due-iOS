@@ -29,7 +29,7 @@ struct AddView: View {
         ScrollView {
             VStack {
                 TextField("Write here...", text: $titleText)
-                    .palatinoFont(14, weight: .regular)
+                    .font(.system(size: 14,weight: .regular))
                     .padding(.horizontal)
                     .frame(height: 55)
                     .background(Color(UIColor.secondarySystemBackground))
@@ -46,7 +46,7 @@ struct AddView: View {
                         }
                         
                     } label: {
-                        buttonStyle(self.subject?.name ?? "Subject")
+                        buttonStyle1(self.subject?.name ?? "Subject")
                     }
                     .opacity(self.model.schedules.isEmpty ? 0.4 : 1.0)
                     .disabled(self.model.schedules.isEmpty)
@@ -90,7 +90,18 @@ struct AddView: View {
         Text(title.uppercased())
             .foregroundColor(.white)
             .lineLimit(1)
-            .palatinoFont(16, weight: .bold)
+            .font(.system(size: 14,weight: .regular))
+            .frame(height: 50)
+            .frame(maxWidth: .infinity)
+            .background(Color.blue)
+            .clipShape(Capsule())
+    }
+    
+    func buttonStyle1(_ title:String) -> some View {
+        Text(title.uppercased())
+            .foregroundColor(.white)
+            .lineLimit(1)
+            .font(.system(size: 10,weight: .regular))
             .frame(height: 50)
             .frame(maxWidth: .infinity)
             .background(Color.blue)
