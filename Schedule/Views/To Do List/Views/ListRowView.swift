@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ListRowView: View {
     
-    let item: TaskItem
+    var item: TaskItem
     var completedBtn:()->()
     var editBtn:()->()
     

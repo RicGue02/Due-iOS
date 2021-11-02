@@ -34,7 +34,7 @@ struct ScheduleFeaturedView: View {
                             ForEach(Array(zip(model.featuredSchedules.indices, model.featuredSchedules)), id: \.0) { index, item in
                                 if item.featured! {
                                     VStack {
-                                        // Recipe card button
+                                        // Schedule card button
                                         Button(action: {
                                             // Show the schedule detail sheet
                                             self.model.selectedSchedule = item

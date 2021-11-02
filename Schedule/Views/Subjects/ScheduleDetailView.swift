@@ -8,6 +8,15 @@
 import SwiftUI
 
 struct ScheduleDetailView: View {
+    
+    // The states need to display all task at the bottom
+    @EnvironmentObject var listViewModel: ListViewModel
+    @State private var editMode = EditMode.inactive
+    @State var showAddView = false
+    @State var isEditMode = false
+    // ---------------------------------------------------//
+    
+    
     @Environment(\.presentationMode) var mode
     @EnvironmentObject var scheduleModel: ScheduleModel
     @State var editItem = false
@@ -75,6 +84,8 @@ struct ScheduleDetailView: View {
                         }
                         .padding(5)
                         
+                        Divider()
+                        
                         // MARK: Links
                         VStack(alignment: .leading) {
                             Text("Schedule")
@@ -114,6 +125,37 @@ struct ScheduleDetailView: View {
                             }
                         }
                         .padding(.horizontal)
+                        
+                        Divider()
+                        
+                        VStack(alignment: .leading) {
+                            
+                            Text("Pending Tasks")
+                                .font(.system(size: 16,weight: .bold))
+                                .padding([.bottom, .top], 5)
+                            
+                            
+                            // Should only display the tasks of that specific topic
+                            
+                            VStack {
+                                
+                                ForEach(listViewModel.items) { item in
+                                    ListRowView(item: item) {
+                                        withAnimation(.linear) {
+                                            listViewModel.updateItem(item: item)
+                                        }
+                                    } editBtn: {
+                                        self.listViewModel.selectedItemToEdit = item
+                                        self.isEditMode = true
+                                        self.showAddView = true
+                                    }
+                                }
+                            }
+  
+                        }
+                        .padding(.horizontal)
+                        
+                        Divider()
                     }
                 }
             
