@@ -32,6 +32,9 @@
 		8C951DF726E9647800B4A148 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C951DF626E9647800B4A148 /* DataService.swift */; };
 		8C951E0126E9B3AA00B4A148 /* schedule.json in Resources */ = {isa = PBXBuildFile; fileRef = 8C951E0026E9B3AA00B4A148 /* schedule.json */; };
 		8CBC2DC127055A4F00633B62 /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBC2DC027055A4F00633B62 /* ColorPickerView.swift */; };
+		8C982A5026F0001000361625 /* OnboardingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C982A5126F0001000361625 /* OnboardingModels.swift */; };
+		8C982A5226F0001100361625 /* OnboardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C982A5326F0001100361625 /* OnboardingFlow.swift */; };
+		8C982A5426F0001200361625 /* OnboardingSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C982A5526F0001200361625 /* OnboardingSteps.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +66,9 @@
 		8C951DF626E9647800B4A148 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		8C951E0026E9B3AA00B4A148 /* schedule.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = schedule.json; sourceTree = "<group>"; };
 		8CBC2DC027055A4F00633B62 /* ColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerView.swift; sourceTree = "<group>"; };
+		8C982A5126F0001000361625 /* OnboardingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModels.swift; sourceTree = "<group>"; };
+		8C982A5326F0001100361625 /* OnboardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlow.swift; sourceTree = "<group>"; };
+		8C982A5526F0001200361625 /* OnboardingSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSteps.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				8C951DF426E9646200B4A148 /* Schedule.swift */,
+				8C982A5126F0001000361625 /* OnboardingModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -234,8 +241,18 @@
 				8C951DD726E9619400B4A148 /* ScheduleTabView.swift */,
 				1F8CAED726F8B98A00474D16 /* AddScheduleView.swift */,
 				1F8CAED926F8C20100474D16 /* ImagePicker */,
+				8C982A5626F0001300361625 /* Onboarding */,
 			);
 			path = "General View";
+			sourceTree = "<group>";
+		};
+		8C982A5626F0001300361625 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				8C982A5326F0001100361625 /* OnboardingFlow.swift */,
+				8C982A5526F0001200361625 /* OnboardingSteps.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -330,6 +347,9 @@
 				1F59744927089BF100F0FF2A /* NotificationManager.swift in Sources */,
 				8C951DF526E9646200B4A148 /* Schedule.swift in Sources */,
 				8C4C978A26F1362B00EC518E /* TaskItem.swift in Sources */,
+				8C982A5026F0001000361625 /* OnboardingModels.swift in Sources */,
+				8C982A5226F0001100361625 /* OnboardingFlow.swift in Sources */,
+				8C982A5426F0001200361625 /* OnboardingSteps.swift in Sources */,
 				8C951DD626E9619400B4A148 /* ScheduleApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
