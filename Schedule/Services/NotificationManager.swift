@@ -7,22 +7,28 @@
 
 import SwiftUI
 
-
-class NotificationManager {
-    static let `default` = NotificationManager()
+@MainActor
+final class NotificationManager: Sendable {
+    static let shared = NotificationManager()
     
     //First time we initialize Notification Class (request Auth & remove delivered)
-    init() {
-        self.requestAuthorization()
-        self.removeAllDeliveredNotifications()
+    private init() {
+        Task {
+            await self.requestAuthorization()
+            await self.removeAllDeliveredNotifications()
+        }
     }
     
     //Request Notification Alert To User
-    private func requestAuthorization() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { _, _ in }
+    private func requestAuthorization() async {
+        do {
+            _ = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound])
+        } catch {
+            print("Failed to request notification authorization: \(error)")
+        }
     }
     
-    func subjectSchedule(_ schedule: Schedule) {
+    nonisolated func subjectSchedule(_ schedule: Schedule) {
         for subjectTime in schedule.times {
             
             ///Set Notification Before 20 Mins
@@ -49,7 +55,7 @@ class NotificationManager {
     
     
     
-     private func getNotificationDateComponents(_ subjectTime: SubjectTime, expectedDate: DateComponents, spesificTime:Bool) -> DateComponents {
+     nonisolated private func getNotificationDateComponents(_ subjectTime: SubjectTime, expectedDate: DateComponents, spesificTime:Bool) -> DateComponents {
         let newDate = Calendar.current.date(byAdding: expectedDate, to: subjectTime.time)!
         
         //Notification Time
@@ -72,7 +78,7 @@ class NotificationManager {
     
     
     //Schedule Notification
-    func scheduleNotification(dateComponents:DateComponents, id: String, title: String, subtitle:String, repeats:Bool) {
+    nonisolated func scheduleNotification(dateComponents:DateComponents, id: String, title: String, subtitle:String, repeats:Bool) {
         //guard let schedule = notification.match.schedule else { return }
         
         //Notification Content
@@ -95,13 +101,18 @@ class NotificationManager {
         self.removeNotificationRequest(id)
         
         //Add New request after remove old if was added
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            UNUserNotificationCenter.current().add(request)
+        Task {
+            do {
+                try await Task.sleep(for: .milliseconds(300))
+                try await UNUserNotificationCenter.current().add(request)
+            } catch {
+                print("Failed to add notification request: \(error)")
+            }
         }
     }
     
     //Remove Scheduled Notification
-    func removeNotificationRequest(_ notificationID: String) {
+    nonisolated func removeNotificationRequest(_ notificationID: String) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [
             ///Subject
             "\(notificationID)_20min",
@@ -116,17 +127,15 @@ class NotificationManager {
     }
     
     //Remove All Scheduled Natification
-    func removeAllPendingNotifications() {
-        DispatchQueue.main.async {
-            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+    nonisolated func removeAllPendingNotifications() {
+        Task {
+            await UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         }
     }
     
     //Remove Delivered Notification
-    private func removeAllDeliveredNotifications() {
-        DispatchQueue.main.async {
-            UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-            UIApplication.shared.applicationIconBadgeNumber = 0
-        }
+    private func removeAllDeliveredNotifications() async {
+        await UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        UIApplication.shared.applicationIconBadgeNumber = 0
     }
 }

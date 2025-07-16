@@ -8,36 +8,32 @@
 import SwiftUI
 
 struct ScheduleTabView: View {
-    @StateObject var listViewModel: ListViewModel = ListViewModel()
+    @State private var scheduleModel = ScheduleModel()
+    @State private var listViewModel = ListViewModel()
     
     var body: some View {
-                
         TabView {
             ScheduleFeaturedView()
                 .tabItem {
-                    VStack {
-                        Image(systemName: "calendar")
-                        Text("Schedule")
-                    }.background(Color(.systemGray6))
+                    Label("Today", systemImage: "calendar")
                 }
-           
+                .tag(0)
+            
             ListView()
                 .tabItem {
-                    VStack {
-                        Image(systemName: "list.star")
-                        Text("Tasks")
-                    }.background(Color(.systemGray6))
+                    Label("Tasks", systemImage: "list.star")
                 }
+                .tag(1)
             
             ScheduleListView()
                 .tabItem {
-                    VStack {
-                        Image(systemName: "books.vertical")
-                        Text("Subjects")
-                    }.background(Color(.systemGray6))
+                    Label("Subjects", systemImage: "books.vertical")
                 }
+                .tag(2)
         }
-        .environmentObject(ScheduleModel())
+        .environment(scheduleModel)
+        .environment(listViewModel)
+        .tint(.accentColor)
     }
 }
 

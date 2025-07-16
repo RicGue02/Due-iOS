@@ -9,7 +9,7 @@ import SwiftUI
 
 extension NotificationManager {
     
-    func taskSchedule(_ task: TaskItem) {
+    nonisolated func taskSchedule(_ task: TaskItem) {
         let timeBefore24Hours = getNotificationDateComponents(task.due, expectedDate: DateComponents(hour: -24))
         let timeBefore12Hours = getNotificationDateComponents(task.due, expectedDate: DateComponents(hour: -12))
         let timeBefore6Hours = getNotificationDateComponents(task.due, expectedDate: DateComponents(hour: -6))
@@ -29,7 +29,7 @@ extension NotificationManager {
     
     
     
-    private func getNotificationDateComponents(_ date: Date, expectedDate: DateComponents) -> DateComponents {
+    nonisolated private func getNotificationDateComponents(_ date: Date, expectedDate: DateComponents) -> DateComponents {
         let newDate = Calendar.current.date(byAdding: expectedDate, to: date)!
         
         //Notification Time

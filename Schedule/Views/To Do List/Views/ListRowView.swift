@@ -7,74 +7,90 @@
 
 import SwiftUI
 
-struct ListRowView: View {
+struct TaskRowView: View {
     
-    var item: TaskItem
-    var completedBtn:()->()
-    var editBtn:()->()
+    let item: TaskItem
+    let completedAction: () -> Void
+    let editAction: () -> Void
     
     var body: some View {
-        
-        HStack(alignment: .top) {
-            Image(systemName: item.isCompleted ? "checkmark.circle" : "circle")
-                .foregroundColor(item.isCompleted ? .green : .red)
-                .onTapGesture {completedBtn()}
+        HStack(spacing: 12) {
+            // Completion Button
+            Button(action: completedAction) {
+                Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
+                    .font(.title2)
+                    .foregroundStyle(item.isCompleted ? .green : .gray)
+            }
+            .buttonStyle(.plain)
             
-            VStack {
+            // Task Content
+            VStack(alignment: .leading, spacing: 6) {
                 Text(item.title)
-                    //.palatinoFont(20, weight: .bold)
-                    .font(.system(size: 16,weight: .regular))
+                    .font(.headline)
+                    .fontWeight(.medium)
+                    .foregroundStyle(item.isCompleted ? .secondary : .primary)
+                    .strikethrough(item.isCompleted)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                HStack(spacing: 4) {
-                    Text("Due:")
-                        //.palatinoFont(12, weight: .bold)
-                        .font(.system(size: 12,weight: .thin))
-                    Text("\(item.due.getFullDateString())")
-                        //.palatinoFont(11, weight: .regular)
-                        .font(.system(size: 10,weight: .thin))
-
+                HStack(spacing: 8) {
+                    Label {
+                        Text(item.due.formatted(date: .abbreviated, time: .shortened))
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    } icon: {
+                        Image(systemName: "calendar")
+                            .foregroundStyle(.blue)
+                    }
+                    
+                    if let remaining = item.remaining, !remaining.isEmpty {
+                        Label {
+                            Text(remaining)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        } icon: {
+                            Image(systemName: "clock")
+                                .foregroundStyle(.orange)
+                        }
+                    }
+                    
                     Spacer()
                 }
-                .padding(.leading, 10)
                 
-                HStack(spacing: 4) {
-                    Text("Remaninig:")
-                        //.palatinoFont(12, weight: .bold)
-                        .font(.system(size: 12,weight: .thin))
-
-                    Text("\(item.remaining ?? "")")
-                        //.palatinoFont(11, weight: .regular)
-                        .font(.system(size: 10,weight: .thin))
-                    Spacer()
+                if let subject = item.subject {
+                    HStack(spacing: 8) {
+                        AsyncImage(url: subject.imageURL) { image in
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } placeholder: {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(.regularMaterial)
+                                .overlay {
+                                    Image(systemName: "book.fill")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                        }
+                        .frame(width: 28, height: 28)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        
+                        Text(subject.name)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundStyle(.blue)
+                            .lineLimit(1)
+                        
+                        Spacer()
+                    }
                 }
-                .padding(.leading, 10)
             }
-            
-            Spacer()
-            
-            VStack {
-                if let uiimage = item.subject?.getImage(width: 100) {
-                    Image(uiImage: uiimage)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 40, height: 40)
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
-                }
-                
-                Text(item.subject?.name ?? "")
-                    //.palatinoFont(12, weight: .regular)
-                    .font(.system(size: 10,weight: .thin))
-                    .multilineTextAlignment(.center)
-                    .frame(width: 60)
-
-            }
-            
         }
-        .font(.title2)
-        .padding(.vertical, 8)
+        .padding(.vertical, 4)
         .contentShape(Rectangle())
-        .onTapGesture {editBtn()}
+        .onTapGesture { editAction() }
     }
 }
+
+// Keep the old name as an alias for compatibility
+typealias ListRowView = TaskRowView
 

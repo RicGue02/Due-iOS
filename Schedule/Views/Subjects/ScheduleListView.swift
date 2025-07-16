@@ -6,102 +6,125 @@
 //
 
 import SwiftUI
-import UIKit
 
 struct ScheduleListView: View {
     
-    @EnvironmentObject var model:ScheduleModel
-    @State var addSchedule = false
-    @State var showImages = false
-    @State var showScheduleDetails = false
+    @Environment(ScheduleModel.self) private var model
+    @State private var addSchedule = false
+    @State private var showScheduleDetails = false
     
     var body: some View {
-        
-        NavigationView {
-            
-            VStack (alignment: .leading) {
-                
-                HStack(spacing: 15) {
-                    Button(action: {
-                        // Implementar la función de meter materias
-                        self.model.selectedSchedule = nil
-                        self.addSchedule = true
-                    }, label: {
-                        Image(systemName: "plus.circle")
-                            .padding(.top, 40)
-                    })
-                    
-                    Text("All Subjects")
-                        .bold()
-                        .padding(.top, 40)
-                        //.palatinoFont(24, weight: .bold)
-                        .font(.system(size: 24,weight: .bold))
-                }
-                
-                ScrollView {
-                    VStack {
-                        ForEach(model.schedules) { item in
-                            // MARK: Row item
-                            HStack(spacing: 20.0) {
-                                if showImages {
-                                    Image(uiImage: item.getImage(width: 100))
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 50, height: 50, alignment: .center)
-                                        .clipped()
-                                        .cornerRadius(5)
-                                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.gray.opacity(0.2), lineWidth: 1))
-                                }
-                                else {
-                                    Spacer()
-                                        .frame(width: 50, height: 50, alignment: .center)
-                                        .cornerRadius(5)
-                                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.gray.opacity(0.2), lineWidth: 1))
-                                }
-                                
-                                // ACA QUITE EL "foregroundColor"
-                                
-                                VStack (alignment: .leading) {
-                                    Text(item.name)
-                                        //.foregroundColor(.black)
-                                        //.palatinoFont(16, weight: .regular)
-                                        .font(.system(size: 16,weight: .regular))
-                                    ScheduleHighlights(highlights: item.highlights)
-                                        //.foregroundColor(.black)
-                                }
-                                Spacer()
-                            }
-                            .onTapGesture {
-                                self.model.selectedSchedule = item
-                                self.showScheduleDetails = true
-                            }
-                            Divider()
+        NavigationStack {
+            Group {
+                if model.schedules.isEmpty {
+                    ContentUnavailableView {
+                        Label("No Subjects", systemImage: "books.vertical")
+                    } description: {
+                        Text("Add your first subject to get started with organizing your schedule.")
+                    } actions: {
+                        Button("Add Subject") {
+                            model.selectedSchedule = nil
+                            addSchedule = true
                         }
-                        .padding(.bottom, 10)
-
-                        NavigationLink(isActive: $showScheduleDetails) {
-                            ScheduleDetailView(navigationBar: true)
-                                .navigationBarTitle(Text(self.model.selectedSchedule?.name ?? ""), displayMode: .inline)
-                        } label: {
-                            Spacer()
-                                .frame(width: 0, height: 0)
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                    }
+                } else {
+                    List(model.schedules) { subject in
+                        SubjectListRow(subject: subject) {
+                            model.selectedSchedule = subject
+                            showScheduleDetails = true
                         }
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
+                    .listStyle(.insetGrouped)
                 }
             }
-            .navigationBarHidden(true)
-            .padding(.leading)
-            .onAppear {DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {self.showImages = true}}
-            .sheet(isPresented: $addSchedule) {AddScheduleView() .environmentObject(model)}
+            .navigationTitle("Subjects")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        model.selectedSchedule = nil
+                        addSchedule = true
+                    } label: {
+                        Image(systemName: "plus")
+                            .fontWeight(.semibold)
+                    }
+                }
+            }
+            .navigationDestination(isPresented: $showScheduleDetails) {
+                ScheduleDetailView(navigationBar: true)
+                    .navigationTitle(model.selectedSchedule?.name ?? "")
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+            .sheet(isPresented: $addSchedule) {
+                AddScheduleView()
+                    .environment(model)
+            }
         }
+    }
+}
+
+struct SubjectListRow: View {
+    let subject: Schedule
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                AsyncImage(url: subject.imageURL) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } placeholder: {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(.regularMaterial)
+                        .overlay {
+                            Image(systemName: "book.fill")
+                                .font(.title2)
+                                .foregroundStyle(.secondary)
+                        }
+                }
+                .frame(width: 60, height: 60)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(subject.name)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    if let teacher = subject.highlights.first, !teacher.isEmpty {
+                        Text(teacher)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    if !subject.description.isEmpty {
+                        Text(subject.description)
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                            .lineLimit(2)
+                    }
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(.vertical, 4)
+        }
+        .buttonStyle(.plain)
     }
 }
 
 struct ScheduleListView_Previews: PreviewProvider {
     static var previews: some View {
         ScheduleListView()
-            .environmentObject(ScheduleModel())
+            .environment(ScheduleModel())
     }
 }

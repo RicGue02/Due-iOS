@@ -7,11 +7,14 @@
 
 import Foundation
 import SwiftUI
+import Observation
 
-class ListViewModel: ObservableObject {
+@MainActor
+@Observable
+class ListViewModel {
     
-    @Published var selectedItemToEdit: TaskItem? = nil
-    @Published var items: [TaskItem] = [] {
+    var selectedItemToEdit: TaskItem? = nil
+    var items: [TaskItem] = [] {
         didSet {
             saveItems()
         }
@@ -43,18 +46,21 @@ class ListViewModel: ObservableObject {
     func addItem(task: TaskItem) {
         ///let newItem = ItemModel(title: title, isCompleted: false)
         items.append(task)
-        NotificationManager.default.taskSchedule(task)
+        NotificationManager.shared.taskSchedule(task)
     }
     func savedEdited(task: TaskItem) {
         for (index, item) in items.enumerated() {
             if item.id == task.id {
                 items[index] = task
-                NotificationManager.default.taskSchedule(task)
+                NotificationManager.shared.taskSchedule(task)
                 break
             }
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.selectedItemToEdit = nil
+        Task {
+            try await Task.sleep(for: .milliseconds(300))
+            await MainActor.run {
+                selectedItemToEdit = nil
+            }
         }
     }
     

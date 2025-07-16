@@ -8,207 +8,238 @@
 import SwiftUI
 
 struct ScheduleDetailView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(ScheduleModel.self) private var scheduleModel
+    @Environment(ListViewModel.self) private var listViewModel
     
-    // The states need to display all task at the bottom
-    @EnvironmentObject var listViewModel: ListViewModel
-    @State private var editMode = EditMode.inactive
-    @State var showAddView = false
-    @State var isEditMode = false
-    // ---------------------------------------------------//
+    @State private var showAddView = false
+    @State private var isEditMode = false
+    @State private var showEditSchedule = false
     
-    
-    @Environment(\.presentationMode) var mode
-    @EnvironmentObject var scheduleModel: ScheduleModel
-    @State var editItem = false
-    var navigationBar:Bool = false
+    var navigationBar: Bool = false
     
     var body: some View {
-        ZStack {
-            if let schedule = scheduleModel.selectedSchedule {
-                ScrollView {
-                    VStack (alignment: .leading) {
-                        
-                        // MARK: Schedule Image
-                        ZStack {
-                            Image(uiImage: schedule.getImage(width: 600))
-                                .resizable()
-                                .scaledToFill()
-                                .frame(maxHeight: 300)
-                                .background(Color.gray.opacity(0.2))
-                                .clipped()
-                            
-                            if let urls = URL(string: schedule.urls) {
-                                Link(destination: urls) {
-                                    Image(systemName: "link.circle")
-                                        .foregroundColor(.blue)
-                                        .font(.largeTitle)
-                                        .position(x: 360, y: 35)
-                                }
+        if let schedule = scheduleModel.selectedSchedule {
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Hero Image Section
+                    AsyncImage(url: schedule.imageURL) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } placeholder: {
+                        Rectangle()
+                            .fill(.regularMaterial)
+                            .overlay {
+                                Image(systemName: "book.fill")
+                                    .font(.largeTitle)
+                                    .foregroundStyle(.secondary)
                             }
-                        }
-
-                        
-                        // MARK: Schedule title
-                        Text(schedule.name)
-                            .bold()
-                            .padding(.top, 20)
-                            .padding(.leading)
-                            //.palatinoFont(24, weight: .bold)
-                            .font(.system(size: 24,weight: .bold))
-                        
-                        HStack {
-                            if let claseURL = URL(string: schedule.clase) {
-                                Link(destination: claseURL) {
-                                    Image(systemName: "video.circle")
-                                        .foregroundColor(.blue)
-                                        .font(.largeTitle)
-                                        .position(x: 60, y: 20)
-                                }
-                            }
-                            if let recursosURL = URL(string: schedule.recursos) {
-                                Link(destination: recursosURL) {
-                                    Image(systemName: "person.crop.circle")
-                                        .foregroundColor(.blue)
-                                        .font(.largeTitle)
-                                        .position(x: 60, y: 20)
-                                }
-                            }
-                            if let chatURL = URL(string: schedule.chat) {
-                                Link(destination: chatURL) {
-                                    Image(systemName: "phone.circle")
-                                        .foregroundColor(.blue)
-                                        .font(.largeTitle)
-                                        .position(x: 60, y: 20)
-                                }
-                            }
-                        }
-                        .padding(5)
-                        
-                        Divider()
-                        
-                        // MARK: Links
-                        VStack(alignment: .leading) {
-                            Text("Schedule")
-                                //.palatinoFont(16, weight: .bold)
-                                .font(.system(size: 16,weight: .bold))
-                                .padding([.bottom, .top], 5)
-                            
-                            ForEach(schedule.times, id:\.self){ subjectTime in
-                                Label {
-                                    Text(subjectTime.day_index.dayName + " at " + subjectTime.time.getString())
-                                } icon: {
-                                    Image(systemName: "clock")
-                                }
-                                .padding(.bottom, 5)
-                                //.palatinoFont(15, weight: .regular)
-                                .font(.system(size: 15,weight: .regular))
-                            }
-                            
-                        }
-                        .padding(.horizontal)
-                        
-                        // MARK: Divider
-                        Divider()
-                        
-                        // MARK: More Information
-                        VStack(alignment: .leading) {
-                            Text("Aditional Information")
-                                //.palatinoFont(16, weight: .bold)
-                                .font(.system(size: 16,weight: .bold))
-                                .padding([.bottom, .top], 5)
-                            
-                            ForEach(schedule.moreinfo, id:\.self) { info in
-                                Text(info)
-                                    //.palatinoFont(15, weight: .regular)
-                                    .font(.system(size: 15,weight: .regular))
-                                    .padding(.bottom, 5)
-                            }
-                        }
-                        .padding(.horizontal)
-                        
-                        Divider()
-                        
-                        VStack(alignment: .leading) {
-                            
-                            Text("Pending Tasks")
-                                .font(.system(size: 16,weight: .bold))
-                                .padding([.bottom, .top], 5)
-                            
-                            
-                            // Should only display the tasks of that specific topic
-                            
-                            VStack {
-                                
-                                ForEach(listViewModel.items) { item in
-                                    ListRowView(item: item) {
-                                        withAnimation(.linear) {
-                                            listViewModel.updateItem(item: item)
-                                        }
-                                    } editBtn: {
-                                        self.listViewModel.selectedItemToEdit = item
-                                        self.isEditMode = true
-                                        self.showAddView = true
-                                    }
-                                }
-                            }
-  
-                        }
-                        .padding(.horizontal)
-                        
-                        Divider()
                     }
-                }
-            
-                
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            self.edit()
-                        } label: {
-                            Label("Edit", systemImage: "pencil")
-                                //.palatinoFont(16, weight: .bold)
-                                .font(.system(size: 16,weight: .bold))
-                                .padding()
-                        }
-                    }
-                }
-                .overlay(
-                    ZStack {
-                        if !navigationBar {
-                            Button {
-                                self.edit()
-                            } label: {
-                                Label("Edit", systemImage: "pencil")
-                                    .padding(8)
-                                    .background(Color.white)
-                                    .clipShape(Capsule())
+                    .frame(height: 250)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(alignment: .topTrailing) {
+                        if !schedule.urls.isEmpty, let url = URL(string: schedule.urls) {
+                            Link(destination: url) {
+                                Image(systemName: "link.circle.fill")
+                                    .font(.title)
+                                    .foregroundStyle(.white, .blue)
+                                    .background(.regularMaterial, in: Circle())
                             }
                             .padding()
                         }
                     }
                     
-                    ,alignment: .topLeading
-                )
-                .sheet(isPresented: $editItem){
-                    AddScheduleView()
-                        .environmentObject(scheduleModel)
-                }
-                
-                
-            }else {
-                Text("DELETED!")
-                    .font(.title)
-                    .onAppear {
-                        self.mode.wrappedValue.dismiss()
+                    VStack(spacing: 16) {
+                        // Quick Actions
+                        HStack(spacing: 16) {
+                            if !schedule.clase.isEmpty, let url = URL(string: schedule.clase) {
+                                Link(destination: url) {
+                                    Label("Join Meeting", systemImage: "video.fill")
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(.white)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 12)
+                                        .background(.blue, in: RoundedRectangle(cornerRadius: 10))
+                                }
+                            }
+                            
+                            if !schedule.recursos.isEmpty, let url = URL(string: schedule.recursos) {
+                                Link(destination: url) {
+                                    Label("Resources", systemImage: "folder.fill")
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(.blue)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 12)
+                                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+                                }
+                            }
+                            
+                            if !schedule.chat.isEmpty, let url = URL(string: schedule.chat) {
+                                Link(destination: url) {
+                                    Label("Chat", systemImage: "message.fill")
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(.green)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 12)
+                                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+                                }
+                            }
+                        }
+                        
+                        // Subject Details Card
+                        VStack(alignment: .leading, spacing: 16) {
+                            if !schedule.description.isEmpty {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Institution")
+                                        .font(.headline)
+                                        .fontWeight(.semibold)
+                                    Text(schedule.description)
+                                        .font(.body)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            
+                            if let teacher = schedule.highlights.first, !teacher.isEmpty {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Teacher")
+                                        .font(.headline)
+                                        .fontWeight(.semibold)
+                                    Text(teacher)
+                                        .font(.body)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Schedule")
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                
+                                ForEach(schedule.times, id: \.self) { subjectTime in
+                                    Label {
+                                        Text("\(subjectTime.day_index.dayName) at \(subjectTime.time.getString())")
+                                            .font(.body)
+                                            .foregroundStyle(.secondary)
+                                    } icon: {
+                                        Image(systemName: "calendar")
+                                            .foregroundStyle(.blue)
+                                    }
+                                }
+                            }
+                            
+                            if let additionalInfo = schedule.moreinfo.first, !additionalInfo.isEmpty {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Additional Information")
+                                        .font(.headline)
+                                        .fontWeight(.semibold)
+                                    Text(additionalInfo)
+                                        .font(.body)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                        .padding()
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                        
+                        // Related Tasks
+                        let relatedTasks = listViewModel.items.filter { item in
+                            item.subject?.id == schedule.id
+                        }
+                        
+                        if !relatedTasks.isEmpty {
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    Text("Related Tasks")
+                                        .font(.headline)
+                                        .fontWeight(.semibold)
+                                    
+                                    Spacer()
+                                    
+                                    Button {
+                                        listViewModel.selectedItemToEdit = nil
+                                        isEditMode = false
+                                        showAddView = true
+                                    } label: {
+                                        Image(systemName: "plus.circle.fill")
+                                            .foregroundStyle(.blue)
+                                    }
+                                }
+                                
+                                ForEach(relatedTasks) { item in
+                                    TaskRowView(item: item) {
+                                        withAnimation(.smooth) {
+                                            listViewModel.updateItem(item: item)
+                                        }
+                                    } editAction: {
+                                        listViewModel.selectedItemToEdit = item
+                                        isEditMode = true
+                                        showAddView = true
+                                    }
+                                }
+                            }
+                            .padding()
+                            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                        } else {
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    Text("Related Tasks")
+                                        .font(.headline)
+                                        .fontWeight(.semibold)
+                                    
+                                    Spacer()
+                                    
+                                    Button {
+                                        listViewModel.selectedItemToEdit = nil
+                                        isEditMode = false
+                                        showAddView = true
+                                    } label: {
+                                        Image(systemName: "plus.circle.fill")
+                                            .foregroundStyle(.blue)
+                                    }
+                                }
+                                
+                                ContentUnavailableView {
+                                    Label("No Tasks", systemImage: "checklist")
+                                } description: {
+                                    Text("No tasks are associated with this subject yet.")
+                                }
+                            }
+                            .padding()
+                            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                        }
                     }
+                }
+                .padding(.horizontal)
             }
-        }
-    }
-    
-    private func edit() {
-        if let schedule = scheduleModel.selectedSchedule {
-            self.scheduleModel.selectedSchedule = schedule
-                    self.editItem.toggle()
+            .toolbar {
+                if navigationBar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            showEditSchedule = true
+                        } label: {
+                            Text("Edit")
+                                .fontWeight(.semibold)
+                        }
+                    }
+                }
+            }
+            .sheet(isPresented: $showEditSchedule) {
+                AddScheduleView()
+                    .environment(scheduleModel)
+            }
+            .navigationDestination(isPresented: $showAddView) {
+                AddView(isEditMode: isEditMode)
+            }
+        } else {
+            ContentUnavailableView {
+                Label("Subject Not Found", systemImage: "exclamationmark.triangle")
+            } description: {
+                Text("The selected subject could not be found.")
+            }
         }
     }
 }

@@ -9,220 +9,159 @@ import SwiftUI
 
 struct ScheduleFeaturedView: View {
     
-    @EnvironmentObject var model:ScheduleModel
-    @State var isDetailViewShowing = false
-    @State var tabSelectionIndex:Int = 0
-    @State var addSchedule = false
-    @State var displayedSchedule:Schedule? = nil
+    @Environment(ScheduleModel.self) private var model
+    @State private var isDetailViewShowing = false
+    @State private var tabSelectionIndex: Int = 0
+    @State private var addSchedule = false
+    @State private var displayedSchedule: Schedule?
     
-    @State var animate: Bool = false
-    let secondaryAccentColor = Color(.blue)
+    @State private var animate = false
+    let secondaryAccentColor = Color.blue
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            if !model.schedules.isEmpty {
-                if !model.featuredSchedules.isEmpty {
-                    Text("Featured Subjects")
-                        //.palatinoFont(24, weight: .bold)
-                        .font(.system(size: 24,weight: .bold))
-                        .padding(.leading)
-                        .padding(.top, 40)
-                    
-                    GeometryReader { geo in
-                        TabView (selection: $tabSelectionIndex) {
-                            // Loop through each schedule
-                            ForEach(Array(zip(model.featuredSchedules.indices, model.featuredSchedules)), id: \.0) { index, item in
-                                if item.featured! {
-                                    VStack {
-                                        // Schedule card button
-                                        Button(action: {
-                                            // Show the schedule detail sheet
-                                            self.model.selectedSchedule = item
-                                            self.isDetailViewShowing = true
-                                            
-                                        }, label: {
-                                            
-                                            // schedule card
-                                            ZStack {
-                                                Rectangle()
-                                                    .foregroundColor(Color(.systemGray6))
-                                                
-                                                VStack(spacing: 0) {
-                                                    Image(uiImage: item.getImage(width: 600))
-                                                        .resizable()
-                                                        .aspectRatio(contentMode: .fill)
-                                                        .frame(height: geo.size.height - 100)
-                                                        .clipped()
-                                                }
-                                                .overlay(
-                                                    VStack {
-                                                        Text(item.name)
-                                                            //.palatinoFont(15, weight: .regular)
-                                                            .font(.system(size: 14,weight: .regular))
-                                                            .frame(maxWidth: .infinity, alignment: .center)
-                                                            .background(Color(.white))
-                                                            .foregroundColor(Color(.black))
-                                                            .padding(0)
-                                                    }
-                                                    ,alignment: .bottom
-                                                )
-                                            }
-                                            
-                                        })
-                                        .tag(item.id)
-                                        .sheet(isPresented: $isDetailViewShowing) {
-                                            // Show the schedule Detail View
-                                            ScheduleDetailView()
-                                                .environmentObject(model)
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
-                                        .frame(width: geo.size.width - 40, height: geo.size.height - 100, alignment: .center)
-                                        .cornerRadius(15)
-                                        .shadow(color: Color(.sRGB, red: 0, green: 0, blue: 0, opacity: 0.5), radius: 10, x: -5, y: 5)
-                                        .onAppear {self.displayedSchedule = item}
-                                    }
-                                    .tag(index)
-                                }
-                            }
-                        }
-                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
-                        .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
-                    }
-                    .frame(minHeight: 480)
-                    
-                    if let displayedSchedule = displayedSchedule {
-                        VStack (alignment: .leading, spacing: 10) {
-                            VStack {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    if !model.schedules.isEmpty {
+                        if !model.featuredSchedules.isEmpty {
+                            HStack {
+                                Text("Today's Subjects")
+                                    .font(.largeTitle)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(.primary)
                                 
-                                // Editar para display mas lindo 
-                                Text("Today")
-                                    //.palatinoFont(12, weight: .regular)
-                                    .font(.system(size: 12,weight: .regular))
-
-                                ForEach(displayedSchedule.times, id:\.self) { subjectTime in
-                                    if subjectTime.day_index == getTodayIndex() {
-                                        Text(subjectTime.time.getString())
-                                            //.palatinoFont(26, weight: .regular)
-                                            .font(.system(size: 18,weight: .thin))
-                                    }
+                                Spacer()
+                                
+                                Button {
+                                    addSchedule = true
+                                } label: {
+                                    Image(systemName: "plus.circle.fill")
+                                        .font(.title2)
+                                        .foregroundStyle(.blue)
                                 }
-                            }.frame(maxWidth: .infinity)
-                            
-                            Divider()
-                            
-                            ScrollView(showsIndicators: false) {
-                                VStack(alignment: .leading) {
-                                                                        
-                                    Text("Institution:")
-                                        //.palatinoFont(18, weight: .bold)
-                                        .font(.system(size: 16,weight: .regular))
-                                    Text(displayedSchedule.description)
-                                        //.palatinoFont(15, weight: .regular)
-                                        .font(.system(size: 14,weight: .thin))
-                                        .padding(.leading, 16)
-                                    
-                                    Spacer()
-                                    
-                                    Text("Date:")
-                                        //.palatinoFont(18, weight: .bold)
-                                        .font(.system(size: 16,weight: .regular))
-                                    
-                                    ForEach(displayedSchedule.times, id:\.self) { subjectTime in
-                                        Label {
-                                            Text(subjectTime.day_index.dayName + " at " + subjectTime.time.getString())
-                                                //.palatinoFont(15, weight: .regular)
-                                                .font(.system(size: 14,weight: .thin))
-                                        } icon: {
-                                            Image(systemName: "clock")
+                            }
+                            .padding(.horizontal)
+                    
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                LazyHStack(spacing: 16) {
+                                    ForEach(model.featuredSchedules.filter { $0.featured == true }) { item in
+                                        SubjectCard(subject: item) {
+                                            model.selectedSchedule = item
+                                            isDetailViewShowing = true
+                                        }
+                                        .onAppear {
+                                            displayedSchedule = item
                                         }
                                     }
-                                    .padding(.leading, 16)
-                                    
-                                    Spacer()
-                                    
-                                    Text("Teacher:")
-                                        //.palatinoFont(18, weight: .bold)
-                                        .font(.system(size: 16,weight: .regular))
-                                    
-                                    ScheduleHighlights(highlights: displayedSchedule.highlights)
-                                        //.palatinoFont(16, weight: .regular)
-                                        .font(.system(size: 14,weight: .thin))
-                                        .padding(.leading, 16)
                                 }
-                                                                
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal)
                             }
-                            
+                            .sheet(isPresented: $isDetailViewShowing) {
+                                ScheduleDetailView()
+                                    .environment(model)
+                            }
+                    
+                            if let displayedSchedule = displayedSchedule {
+                                VStack(spacing: 16) {
+                                    // Today's Schedule Card
+                                    VStack(spacing: 12) {
+                                        Text("Today's Schedule")
+                                            .font(.headline)
+                                            .fontWeight(.semibold)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        
+                                        ForEach(displayedSchedule.times, id: \.self) { subjectTime in
+                                            if subjectTime.day_index == getTodayIndex() {
+                                                HStack {
+                                                    Image(systemName: "clock.fill")
+                                                        .foregroundStyle(.blue)
+                                                    Text(subjectTime.time.getString())
+                                                        .font(.title2)
+                                                        .fontWeight(.medium)
+                                                    Spacer()
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .padding()
+                                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                                    
+                                    // Subject Details Card
+                                    VStack(alignment: .leading, spacing: 16) {
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            Text("Institution")
+                                                .font(.headline)
+                                                .fontWeight(.semibold)
+                                            Text(displayedSchedule.description)
+                                                .font(.body)
+                                                .foregroundStyle(.secondary)
+                                        }
+                                        
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            Text("Schedule")
+                                                .font(.headline)
+                                                .fontWeight(.semibold)
+                                            
+                                            ForEach(displayedSchedule.times, id: \.self) { subjectTime in
+                                                Label {
+                                                    Text("\(subjectTime.day_index.dayName) at \(subjectTime.time.getString())")
+                                                        .font(.body)
+                                                        .foregroundStyle(.secondary)
+                                                } icon: {
+                                                    Image(systemName: "calendar")
+                                                        .foregroundStyle(.blue)
+                                                }
+                                            }
+                                        }
+                                        
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            Text("Teacher")
+                                                .font(.headline)
+                                                .fontWeight(.semibold)
+                                            ScheduleHighlights(highlights: displayedSchedule.highlights)
+                                                .font(.body)
+                                                .foregroundStyle(.secondary)
+                                        }
+                                    }
+                                    .padding()
+                                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                                }
+                                .padding(.horizontal)
+                            }
+                    
+                        } else {
+                            ContentUnavailableView {
+                                Label("No Subjects Today", systemImage: "calendar.badge.exclamationmark")
+                            } description: {
+                                Text("You have no subjects scheduled for today. Enjoy your free time!")
+                            }
+                            .padding()
                         }
-                        .padding([.leading, .bottom])
+                        
+                    } else {
+                        ContentUnavailableView {
+                            Label("Welcome to Due!", systemImage: "books.vertical")
+                        } description: {
+                            Text("Add your first subject to get started with managing your schedule.")
+                        } actions: {
+                            Button("Add Subject") {
+                                addSchedule = true
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.large)
+                        }
+                        .padding()
                     }
-                    
-                }else {
-                   
-                    Text("No Subjects Today!")
-                        .font(.title.bold())
-                    
-                }
-                
-            }else {
-                VStack(spacing: 10) {
-                    Spacer()
-                    Text("Welcome to Due!")
-                        //.palatinoFont(26, weight: .bold)
-                        .font(.system(size: 26,weight: .regular))
-
-                    Text("Add your subject so you can keep everything tight")
-                        .padding(.bottom, 20)
-                        //.palatinoFont(14, weight: .regular)
-                        .font(.system(size: 14,weight: .thin))
-                    
-                    Divider()
-                    Spacer()
-                    
-                    //aún no me decido de la imagen/logo
-                    Image("med")
-                        .resizable()
-                        .scaledToFit()
-                        .clipped()
-                    
-                    Spacer()
-
-                    HStack(spacing: 10) {
-                        Button(action: {
-                            self.addSchedule = true
-                        }, label: {
-                            Image(systemName: "plus.circle")
-                                .font(.title2)
-                        })
-                        Text("New subject!")
-                            //.palatinoFont(14, weight: .bold)
-                            .font(.system(size: 14,weight: .bold))
-                            .onTapGesture {self.addSchedule = true}
-                            .background(animate ? secondaryAccentColor.opacity(0.0) : Color.white.opacity(0.0))
-                            .foregroundColor(.blue)
-                    }
-                    .frame(height: 55)
-                    .frame(maxWidth: .infinity)
-                    .cornerRadius(10)
-                    .padding(.horizontal, animate ? 30 : 50)
-                    .shadow(
-                        color: animate ? secondaryAccentColor.opacity(0.5) : Color.blue.opacity(0.5),
-                        radius: animate ? 30 : 10,
-                        x: 0,
-                        y: animate ? 50 : 30)
-                    .scaleEffect(animate ? 1.1 : 1.0)
-                    .offset(y: animate ? -7 : 0)
-                    
-                    Spacer()
                 }
             }
+            .navigationTitle("Today")
+            .navigationBarTitleDisplayMode(.large)
+            .onAppear(perform: addAnimation)
+            .sheet(isPresented: $addSchedule) {
+                AddScheduleView()
+                    .environment(model)
+            }
         }
-        .frame(maxWidth: 400)
-        .multilineTextAlignment(.center)
-        .padding(.horizontal, 20)
-        .onAppear(perform: addAnimation)
-        //.onAppear(perform: {setFeaturedIndex()})
-        .sheet(isPresented: $addSchedule) {AddScheduleView() .environmentObject(model)}
     }
     
 //    func setFeaturedIndex() {
@@ -235,24 +174,73 @@ struct ScheduleFeaturedView: View {
     
     func addAnimation() {
         guard !animate else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            withAnimation(
-                Animation
+        Task {
+            try await Task.sleep(for: .seconds(1.5))
+            await MainActor.run {
+                withAnimation(
                     .easeInOut(duration: 2.0)
                     .repeatForever()
-            ) {
-                animate.toggle()
+                ) {
+                    animate.toggle()
+                }
             }
         }
     }
 }
 
-
+struct SubjectCard: View {
+    let subject: Schedule
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 0) {
+                AsyncImage(url: subject.imageURL) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } placeholder: {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.regularMaterial)
+                        .overlay {
+                            Image(systemName: "book.fill")
+                                .font(.largeTitle)
+                                .foregroundStyle(.secondary)
+                        }
+                }
+                .frame(width: 280, height: 200)
+                .clipped()
+                
+                VStack(spacing: 8) {
+                    Text(subject.name)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                    
+                    if let teacher = subject.highlights.first {
+                        Text(teacher)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(.regularMaterial)
+            }
+        }
+        .buttonStyle(.plain)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+    }
+}
 
 struct ScheduleFeaturedView_Previews: PreviewProvider {
     static var previews: some View {
         ScheduleFeaturedView()
-            .environmentObject(ScheduleModel())
+            .environment(ScheduleModel())
     }
 }
 

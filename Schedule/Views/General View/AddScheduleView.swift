@@ -12,12 +12,8 @@ private let holderWidth:CGFloat = 80
 private let bg = Color.gray.opacity(0.2)
 
 struct AddScheduleView: View {
-    @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var scheduleModel: ScheduleModel
-    
-    init() {
-        UITextView.appearance().backgroundColor = .clear
-    }
+    @Environment(\.dismiss) private var dismiss
+    @Environment(ScheduleModel.self) private var scheduleModel
     
     @State private var nameText = ""
     @State private var descriptionText = ""
@@ -31,108 +27,202 @@ struct AddScheduleView: View {
     @State private var timesArray = [SubjectTime]()
     
     @State private var isShowPhotoLibrary = false
-    @State private var image:UIImage? = nil
+    @State private var image: UIImage? = nil
     @State private var isEditMode = false
+    @State private var showingDeleteConfirmation = false
+    @State private var errorMessage = ""
+    @State private var showingError = false
     
     var body: some View {
-        ZStack {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 16) {
-                    
-                    //Image
-                    VStack {
-                        Image(uiImage: self.image ?? UIImage())
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 140, height: 140)
-                            .background(bg)
-                            .clipShape(Circle())
-                            .overlay(
-                                ZStack {
-                                    if self.image == nil {
-                                        Image(systemName: "plus.circle")
-                                            .font(.title)
-                                    }
-                                }
-                            ).onTapGesture {self.isShowPhotoLibrary = true}
+        NavigationStack {
+            Form {
+                // Image Section
+                Section {
+                    HStack {
+                        Spacer()
                         
-                        Text("Add image")
-                            .foregroundColor(.blue)
-                            //.palatinoFont(12, weight: .regular)
-                            .font(.system(size: 12,weight: .regular))
-                            .onTapGesture {self.isShowPhotoLibrary = true}
+                        Button {
+                            isShowPhotoLibrary = true
+                        } label: {
+                            VStack(spacing: 8) {
+                                if let image = image {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 100, height: 100)
+                                        .clipShape(Circle())
+                                } else {
+                                    Circle()
+                                        .fill(.regularMaterial)
+                                        .frame(width: 100, height: 100)
+                                        .overlay {
+                                            Image(systemName: "camera.fill")
+                                                .font(.title)
+                                                .foregroundStyle(.secondary)
+                                        }
+                                }
+                                
+                                Text("Add Photo")
+                                    .font(.caption)
+                                    .foregroundStyle(.blue)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        
+                        Spacer()
+                    }
+                } header: {
+                    Text("Subject Photo")
+                }
+                
+                // Basic Information
+                Section {
+                    TextField("Subject Name", text: $nameText)
+                    
+                    TextField("Institution", text: $descriptionText, axis: .vertical)
+                        .lineLimit(2...4)
+                    
+                    TextField("Teacher", text: $highlightsText)
+                } header: {
+                    Text("Basic Information")
+                }
+                
+                // Schedule
+                Section {
+                    ForEach(timesArray.indices, id: \.self) { index in
+                        HStack {
+                            Label {
+                                Text("\(timesArray[index].day_index.dayName) at \(timesArray[index].time.getString())")
+                            } icon: {
+                                Image(systemName: "calendar")
+                                    .foregroundStyle(.blue)
+                            }
+                            
+                            Spacer()
+                            
+                            Button {
+                                NotificationManager.shared.removeNotificationRequest(timesArray[index].id)
+                                timesArray.remove(at: index)
+                            } label: {
+                                Image(systemName: "minus.circle.fill")
+                                    .foregroundStyle(.red)
+                            }
+                        }
                     }
                     
-                    ///Name
-                    inputItem(textBinding: $nameText, title: "Name")
-                    //Input Items
-                    MainView(nameText: $nameText,
-                             descriptionText: $descriptionText,
-                             highlightsText: $highlightsText,
-                             claseText: $claseText,
-                             courseText: $courseText,
-                             recursosText: $recursosText,
-                             chatText: $chatText,
-                             moreInfoText: $moreInfoText,
-                             timesArray: $timesArray)
+                    ScheduleTimePicker(timesArray: $timesArray, date: $date)
+                } header: {
+                    Text("Schedule")
+                } footer: {
+                    Text("Add class times for this subject")
+                }
+                
+                // Links and Resources
+                Section {
+                    TextField("Meeting Link", text: $claseText)
+                        .keyboardType(.URL)
                     
-                    //Add Button
-                    Button {
-                        self.addSchedule()
-                    } label: {
-                        Text(isEditMode ? "Save" : "Add")
-                            //.palatinoFont(16, weight: .bold)
-                            .font(.system(size: 16,weight: .bold))
-                            .foregroundColor(Color.white)
-                            .frame(height: 44)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.blue)
-                            .clipShape(Capsule())
-                            .padding(.top, 20)
-                    }
+                    TextField("Platform Link", text: $courseText)
+                        .keyboardType(.URL)
                     
+                    TextField("Resources", text: $recursosText)
+                        .keyboardType(.URL)
+                    
+                    TextField("Chat", text: $chatText)
+                        .keyboardType(.URL)
+                    
+                    TextField("Additional Info", text: $moreInfoText, axis: .vertical)
+                        .lineLimit(2...4)
+                } header: {
+                    Text("Links & Resources")
                 }
             }
-        }
-        .overlay(
-            ZStack {
-                if let schedule = self.scheduleModel.selectedSchedule, isEditMode {
-                    Button {
-                        self.scheduleModel.updateSchedules(schedule, isEditMode: true, removeIt: true)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            self.scheduleModel.selectedSchedule = nil
-                            self.presentationMode.wrappedValue.dismiss()
-                        }
-                        
-                    } label: {
-                        Label("delete", systemImage: "xmark")
-                            .padding(4)
-                            .background(Color.red)
-                            .foregroundColor(.white)
-                            .clipShape(Capsule())
+            .navigationTitle(isEditMode ? "Edit Subject" : "New Subject")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
                     }
-                    .padding()
                 }
-            },alignment: .topTrailing)
-        .padding()
-        .onTapGesture {UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)}
-        .onAppear {updateContent()}
-        .sheet(isPresented: $isShowPhotoLibrary) {ImagePicker(sourceType: .photoLibrary, selectedImage: self.$image)}
+                
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(isEditMode ? "Save" : "Add") {
+                        addSchedule()
+                    }
+                    .fontWeight(.semibold)
+                    .disabled(nameText.trimmingCharacters(in: .whitespaces).isEmpty || timesArray.isEmpty)
+                }
+                
+                if isEditMode {
+                    ToolbarItem(placement: .destructiveAction) {
+                        Button {
+                            showingDeleteConfirmation = true
+                        } label: {
+                            Image(systemName: "trash")
+                                .foregroundStyle(.red)
+                        }
+                    }
+                }
+            }
+            .onAppear { updateContent() }
+            .sheet(isPresented: $isShowPhotoLibrary) {
+                ImagePicker(sourceType: .photoLibrary, selectedImage: $image)
+            }
+            .alert("Error", isPresented: $showingError) {
+                Button("OK") { }
+            } message: {
+                Text(errorMessage)
+            }
+            .alert("Delete Subject", isPresented: $showingDeleteConfirmation) {
+                Button("Delete", role: .destructive) {
+                    if let schedule = scheduleModel.selectedSchedule {
+                        scheduleModel.updateSchedules(schedule, isEditMode: true, removeIt: true)
+                        Task {
+                            try await Task.sleep(for: .milliseconds(200))
+                            await MainActor.run {
+                                scheduleModel.selectedSchedule = nil
+                                dismiss()
+                            }
+                        }
+                    }
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("Are you sure you want to delete this subject? This action cannot be undone.")
+            }
+        }
     }
     
     
     private func addSchedule() {
-        if self.nameText != "" {
-            if timesArray.isEmpty {
-               return
-            }
+        let trimmedName = nameText.trimmingCharacters(in: .whitespaces)
+        
+        guard !trimmedName.isEmpty else {
+            errorMessage = "Please enter a subject name"
+            showingError = true
+            return
+        }
+        
+        guard !timesArray.isEmpty else {
+            errorMessage = "Please add at least one class time"
+            showingError = true
+            return
+        }
+        
+        do {
+            let schedule = try buildScheduleModel()
+            scheduleModel.updateSchedules(schedule, isEditMode: isEditMode)
             
-            let schedule = self.buildScheduleModel()
-            self.scheduleModel.updateSchedules(schedule, isEditMode: self.isEditMode)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                self.presentationMode.wrappedValue.dismiss()
+            Task {
+                try await Task.sleep(for: .milliseconds(200))
+                await MainActor.run {
+                    dismiss()
+                }
             }
+        } catch {
+            errorMessage = "Failed to save subject: \(error.localizedDescription)"
+            showingError = true
         }
     }
     
@@ -152,11 +242,18 @@ struct AddScheduleView: View {
         }
     }
     
-    private func buildScheduleModel() -> Schedule {
+    private func buildScheduleModel() throws -> Schedule {
+        let imageURL: URL?
+        if let image = self.image {
+            imageURL = try DataService.getImageUrlFromDocumentDirectory(image: image)
+        } else {
+            imageURL = self.scheduleModel.selectedSchedule?.imageURL
+        }
+        
         let schedule = Schedule(id: self.scheduleModel.selectedSchedule?.id ?? UUID().uuidString,
                                 name: nameText,
                                 urls: courseText,
-                                imageURL: DataService.getImageUrlFromDocumentDirectory(image: self.image),
+                                imageURL: imageURL,
                                 description: descriptionText,
                                 clase: claseText,
                                 recursos: recursosText,
@@ -167,6 +264,50 @@ struct AddScheduleView: View {
         
         self.scheduleModel.selectedSchedule = schedule
         return schedule
+    }
+}
+
+struct ScheduleTimePicker: View {
+    @Binding var timesArray: [SubjectTime]
+    @Binding var date: Date
+    @State private var weekdayIndex: Int = -1
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Menu {
+                ForEach(WeekDays.allCases, id: \.self) { day in
+                    Button {
+                        weekdayIndex = day.index
+                    } label: {
+                        Text(day.rawValue)
+                    }
+                }
+            } label: {
+                Text(weekdayIndex > 0 ? weekdayIndex.dayName : "Choose day")
+                    .foregroundStyle(weekdayIndex > 0 ? .primary : .secondary)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            
+            DatePicker("Time", selection: $date, displayedComponents: [.hourAndMinute])
+                .labelsHidden()
+                .datePickerStyle(.compact)
+            
+            Button {
+                if weekdayIndex > 0 {
+                    let subjectTime = SubjectTime(id: UUID().uuidString, day_index: weekdayIndex, time: date)
+                    if !timesArray.contains(subjectTime) {
+                        timesArray.append(subjectTime)
+                        weekdayIndex = -1
+                    }
+                }
+            } label: {
+                Image(systemName: "plus.circle.fill")
+                    .font(.title2)
+                    .foregroundStyle(weekdayIndex > 0 ? .blue : .secondary)
+            }
+            .disabled(weekdayIndex <= 0)
+        }
     }
 }
 
@@ -189,7 +330,8 @@ private struct MainView:View {
         VStack(spacing: 16) {
             ///Description
             HStack(alignment: .top) {
-                Text("Description:    ")
+                //espacio y cambio por institution
+                Text("Institution:        ")
                     .font(.caption)
                     .multilineTextAlignment(.leading)
                     .frame(width: holderWidth)
@@ -203,9 +345,9 @@ private struct MainView:View {
                     .background(bg)
                     .clipShape(RoundedRectangle(cornerRadius: 6))
             }
-            
+            // highlights ahora es teacher
             ///Highlights
-            inputItem(textBinding: $highlightsText, title: "Highlights")
+            inputItem(textBinding: $highlightsText, title: "Teacher")
             ///Dates
             
             HStack (spacing:25) {
@@ -244,13 +386,13 @@ private struct MainView:View {
             .padding(6)
             .background(bg)
             .clipShape(RoundedRectangle(cornerRadius: 12))
-            .animation(.none)
+            .animation(.none, value: UUID())
            
             SelectedDates(timesArray: $timesArray)
             ///**** **** ***** ***** ***** ***** *****
             Divider()
             ///Clase
-            inputItem(textBinding: $claseText, title: "Zoom link")
+            inputItem(textBinding: $claseText, title: "Meeting link")
             ///Course Link
             inputItem(textBinding: $courseText, title: "Platform link")
             ///Recursos Link
@@ -279,7 +421,7 @@ struct SelectedDates: View {
                         .onTapGesture {
                             ///this line only for edit mode
                             ///because there is a notification scheduled
-                            NotificationManager.default.removeNotificationRequest(subjectTime.id)
+                            NotificationManager.shared.removeNotificationRequest(subjectTime.id)
                             timesArray.remove(at: index)
                         }
                 }
@@ -319,6 +461,7 @@ private struct inputItem: View {
 
 struct AddScheduleView_Previews: PreviewProvider {
     static var previews: some View {
-        AddScheduleView()
+        ScheduleFeaturedView()
+        .environment(ScheduleModel())
     }
 }

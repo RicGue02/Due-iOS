@@ -9,64 +9,62 @@ import SwiftUI
 
 struct ListView: View {
     
-    @EnvironmentObject var listViewModel: ListViewModel
-    @State private var editMode = EditMode.inactive
-    
-    @State var showAddView = false
-    @State var isEditMode = false
+    @Environment(ListViewModel.self) private var listViewModel
+    @State private var showAddView = false
+    @State private var isEditMode = false
     
     var body: some View {
-        NavigationView {
-            ZStack {
+        NavigationStack {
+            Group {
                 if listViewModel.items.isEmpty {
-                    NoItemsView()
-                        .transition(AnyTransition.opacity.animation(.easeIn))
+                    ContentUnavailableView {
+                        Label("No Tasks Yet", systemImage: "checklist")
+                    } description: {
+                        Text("Add your first task to get started with staying organized.")
+                    } actions: {
+                        Button("Add Task") {
+                            listViewModel.selectedItemToEdit = nil
+                            isEditMode = false
+                            showAddView = true
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                    }
                 } else {
                     List {
                         ForEach(listViewModel.items) { item in
-                            ListRowView(item: item) {
-                                withAnimation(.linear) {
+                            TaskRowView(item: item) {
+                                withAnimation(.smooth) {
                                     listViewModel.updateItem(item: item)
                                 }
-                            } editBtn: {
-                                self.listViewModel.selectedItemToEdit = item
-                                self.isEditMode = true
-                                self.showAddView = true
+                            } editAction: {
+                                listViewModel.selectedItemToEdit = item
+                                isEditMode = true
+                                showAddView = true
                             }
                         }
                         .onDelete(perform: listViewModel.deleteItem)
                         .onMove(perform: listViewModel.moveItem)
                     }
-                    .listStyle(PlainListStyle())
-                     
-                    //push addView
-                    NavigationLink(isActive: $showAddView) {
-                        AddView(isEditMode: self.isEditMode)
-                    } label: {
-                        Spacer()
-                            .frame(width: 1, height: 1)
-                    }
+                    .listStyle(.insetGrouped)
                 }
             }
             .navigationTitle("Tasks")
-            //.palatinoFont(16, weight: .bold)
-            .font(.system(size: 16,weight: .bold))
-            .environment(\.editMode, $editMode)
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    EditButton(editMode: $editMode)
-                        .palatinoFont(14, weight: .regular)
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        self.listViewModel.selectedItemToEdit = nil
-                        self.isEditMode = false
-                        self.showAddView = true
+                        listViewModel.selectedItemToEdit = nil
+                        isEditMode = false
+                        showAddView = true
                     } label: {
-                        Text("New")
-                            .palatinoFont(16, weight: .bold)
+                        Image(systemName: "plus")
+                            .fontWeight(.semibold)
                     }
                 }
+            }
+            .navigationDestination(isPresented: $showAddView) {
+                AddView(isEditMode: isEditMode)
             }
         }
     }    
@@ -83,7 +81,7 @@ struct EditButton: View {
             default: break
             }
         } label: {
-            if let isEditing = editMode.isEditing, isEditing {
+            if editMode.isEditing {
                 Text("Done")
                     //.palatinoFont(16, weight: .bold)
                     .font(.system(size: 16,weight: .bold))
@@ -102,6 +100,6 @@ struct ListView_Previews: PreviewProvider {
         NavigationView {
             ListView()
         }
-        .environmentObject(ListViewModel())
+        .environment(ListViewModel())
     }
 }

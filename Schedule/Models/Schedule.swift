@@ -33,18 +33,13 @@ struct Schedule: Identifiable, Hashable, Codable {
     
     
     func getImage(width: CGFloat) -> UIImage {
-        return DataService.getImageFromDocumentDirectory(by: self.imageURL)
-        
-        /**
-         if let imageData = self.image?.photo {
-         if let uiImage = UIImage(data: imageData) {
-         let resizedImage = self.resizeImage(image: uiImage, newWidth: width)
-         return resizedImage ?? UIImage()
-         }
-         }
-         return UIImage()
-         */
-        
+        do {
+            let image = try DataService.getImageFromDocumentDirectory(by: self.imageURL)
+            return resizeImage(image: image, newWidth: width) ?? image
+        } catch {
+            // Return default image on error
+            return UIImage(systemName: "photo") ?? UIImage()
+        }
     }
     
     private func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage? {
@@ -60,13 +55,6 @@ struct Schedule: Identifiable, Hashable, Codable {
     }
 }
 
-/**
- public struct CodableImage: Codable {
- public let photo: Data?
- public init(photo: UIImage) {
- self.photo = photo.pngData()
- }
- }*/
 
 struct Links: Identifiable, Hashable, Codable {
     var id:UUID?
@@ -83,8 +71,8 @@ struct SubjectTime: Hashable, Codable {
 enum WeekDays: String, CaseIterable {
     case Monday
     case Tuesday
-    case Wendnesday
-    case Thrusday
+    case Wednesday
+    case Thursday
     case Friday
     case Saturday
     case Sunday
@@ -95,8 +83,8 @@ enum WeekDays: String, CaseIterable {
         case .Sunday: return 1
         case .Monday: return 2
         case .Tuesday: return 3
-        case .Wendnesday: return 4
-        case .Thrusday: return 5
+        case .Wednesday: return 4
+        case .Thursday: return 5
         case .Friday: return 6
         case .Saturday: return 7
         }
@@ -109,8 +97,8 @@ extension Int {
         case 1: return "Sunday"
         case 2: return "Monday"
         case 3: return "Tuesday"
-        case 4: return "Wendnesday"
-        case 5: return "Thrusday"
+        case 4: return "Wednesday"
+        case 5: return "Thursday"
         case 6: return "Friday"
         case 7: return "Saturday"
         default: return "NONE"
@@ -120,22 +108,9 @@ extension Int {
 }
 
 func getTodayIndex() -> Int {
-
-//    var calender = Calendar.current
-//    calender.firstWeekday = 1
-//    let components = calender.dateComponents([.weekday, .weekdayOrdinal, .weekOfMonth, .weekOfYear, .day, .hour, .minute], from: Date())
-//    let todayDate = calender.date(from: components)
-//
-    
-//    let prefLanguage = Locale.preferredLanguages[0]
-//            var calendar = Calendar(identifier: .gregorian)
-//            calendar.locale = NSLocale(localeIdentifier: prefLanguage) as Locale
-    
-    
-    
     let formatter: DateFormatter = DateFormatter()
     formatter.dateFormat = "e"
-    var day_index:Int = Int(formatter.string(from: Date()))!
+    var day_index: Int = Int(formatter.string(from: Date()))!
     
     let currentCalendarStartDay = Calendar.current.firstWeekday
     
